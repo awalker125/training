@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This web.xml file is not required when using Servlet 3.0 container,
-     see implementation details http://jersey.java.net/nonav/documentation/latest/jax-rs.html -->
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-    <servlet>
-        <servlet-name>Jersey Web Application</servlet-name>
-        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-        <init-param>
-            <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>uk.co.aw125.training</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Jersey Web Application</servlet-name>
-        <url-pattern>/webapi/*</url-pattern>
-    </servlet-mapping>
+<!-- This web.xml file is not required when using Servlet 3.0 container, 
+	see implementation details http://jersey.java.net/nonav/documentation/latest/jax-rs.html -->
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<servlet>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>
+			io.swagger.jaxrs.listing,
+			uk.co.aw125.training.resources
+			</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<url-pattern>/webapi/*</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>Swagger Bootstrap</description>
+		<display-name>Bootstrap</display-name>
+		<servlet-name>Bootstrap</servlet-name>
+		<servlet-class>uk.co.aw125.training.Bootstrap</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
 </web-app>
