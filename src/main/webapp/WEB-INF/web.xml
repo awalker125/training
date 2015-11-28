@@ -25,7 +25,7 @@
 		<description>Swagger Bootstrap</description>
 		<display-name>Bootstrap</display-name>
 		<servlet-name>Bootstrap</servlet-name>
-		<servlet-class>uk.co.aw125.training.Bootstrap</servlet-class>
+		<servlet-class>uk.co.aw125.training.config.Bootstrap</servlet-class>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 </web-app>
