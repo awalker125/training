@@ -4,7 +4,7 @@
 	<p>
 		<a href="webapi/myresource">Jersey resource</a>
 	<p>
-		<a href="/swagger-ui">Swagger</a>
+		<a href="swagger-ui/index.html">Swagger</a>
 	<p>
 		Visit <a href="http://jersey.java.net">Project Jersey website</a> for
 		more information on Jersey!
