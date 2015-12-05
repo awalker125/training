@@ -16,7 +16,9 @@
 
 package uk.co.aw125.training.exceptions;
 
-public class ApiException extends Exception {
+import javax.ws.rs.WebApplicationException;
+
+public class ApiException extends WebApplicationException {
 	private int code;
 
 	public ApiException(int code, String msg) {

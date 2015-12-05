@@ -60,6 +60,47 @@
 			<artifactId>swagger-jersey2-jaxrs</artifactId>
 			<version>1.5.0</version>
 		</dependency>
+
+		<!-- log4j -->
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.4.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+			<version>2.4.1</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- commons io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+
+		<!-- mongo jack -->
+		<dependency>
+			<groupId>org.mongojack</groupId>
+			<artifactId>mongojack</artifactId>
+			<version>2.5.1</version>
+		</dependency>
+
+		<!-- mongo db -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.1.1</version>
+		</dependency>
 	</dependencies>
 	<properties>
 		<jersey.version>2.22.1</jersey.version>
