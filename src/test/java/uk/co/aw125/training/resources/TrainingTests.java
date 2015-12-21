@@ -22,6 +22,7 @@ public class TrainingTests extends JerseyTest {
 	@Override
 	protected ResourceConfig configure() {
 		enable(TestProperties.LOG_TRAFFIC);
+		enable(TestProperties.DUMP_ENTITY);
 		return new ResourceConfig(User.class);
 	}
 

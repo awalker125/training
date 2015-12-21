@@ -3,16 +3,15 @@ package uk.co.aw125.training.exceptions;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-public class NotFoundException extends WebApplicationException {
+public class ImmutableException extends WebApplicationException {
 
-	
 	/**
 	 * Create a HTTP 400 (Bad Request) exception.
 	 * 
 	 * @param message
 	 *            the String that is the entity of the 404 response.
 	 */
-	public NotFoundException(String message) {
-		super(Response.status(Response.Status.NOT_FOUND).entity(message).type("text/plain").build());
+	public ImmutableException(String message) {
+		super(Response.status(Response.Status.BAD_REQUEST).entity(message).type("text/plain").build());
 	}
 }
