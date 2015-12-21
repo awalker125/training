@@ -24,7 +24,8 @@ public class ConfigManager implements Serializable {
 	private static final Logger logger = LogManager.getLogger(ConfigManager.class);
 	private static Random random;
 	private final String nestedPropertyRegex = "\\$\\{(.+?)\\}";
-	private final String xorPropertyRegex = "\\$XOR\\{(.+?)\\}";
+	private final String xorPropertyRegex = "\\$ENC\\{(.+?)\\}";
+	private final int xorLoopCount = 3;
 	private static HashMap<String, ConfigManager> configManagerMap;
 	// private static ConfigManager configManager;
 	private String configName = null;
@@ -276,7 +277,7 @@ public class ConfigManager implements Serializable {
 
 		logger.trace("Encrypting: " + string);
 		try {
-			for (int i = 0; i < 2; i++) {
+			for (int i = 0; i < xorLoopCount; i++) {
 				string = xorEncrypt(string);
 			}
 			return string;
@@ -298,7 +299,7 @@ public class ConfigManager implements Serializable {
 			String xor = matcher.group(1);
 			logger.trace("Decrypting: " + xor);
 			try {
-				for (int i = 0; i < 2; i++) {
+				for (int i = 0; i < xorLoopCount; i++) {
 					xor = xorDecrypt(xor);
 				}
 				return xor;
