@@ -10,7 +10,6 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class Heartbeat {
 
-	@MongoId
 	@MongoObjectId
 	private String id;
 

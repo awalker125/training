@@ -1,5 +1,10 @@
 package uk.co.aw125.training.data;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
@@ -15,6 +20,8 @@ import uk.co.aw125.training.bootstrap.Launcher;
 import uk.co.aw125.training.config.ConfigManager;
 import uk.co.aw125.training.models.Excercise;
 import uk.co.aw125.training.models.Heartbeat;
+import uk.co.aw125.training.models.Mood;
+import uk.co.aw125.training.models.Set;
 import uk.co.aw125.training.models.User;
 
 public class DataManager {
@@ -95,7 +102,7 @@ public class DataManager {
 
 	}
 
-	public User saveUser(User user) {
+	public User insertUser(User user) {
 
 		Jongo jongo = new Jongo(mongoDatabase);
 		MongoCollection users = jongo.getCollection(User.class.getSimpleName());
@@ -114,6 +121,22 @@ public class DataManager {
 		users.update("{username:#}", username).with(user);
 		return user;
 
+	}
+
+	public User saveUser(User user) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection users = jongo.getCollection(User.class.getSimpleName());
+
+		users.save(user);
+		return user;
+
+	}
+
+	public void removeUser(User user) {
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection users = jongo.getCollection(User.class.getSimpleName());
+		users.remove(user.getId());
 	}
 
 	public User getUserByUsername(String username) {
@@ -176,7 +199,7 @@ public class DataManager {
 
 	}
 
-	public Excercise saveExcercise(Excercise excercise) {
+	public Excercise insertExcercise(Excercise excercise) {
 
 		Jongo jongo = new Jongo(mongoDatabase);
 		MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
@@ -194,6 +217,25 @@ public class DataManager {
 
 		excercises.update("{name:#}", name).with(excercise);
 		return excercise;
+
+	}
+
+	public Excercise saveExcercise(Excercise excercise) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+
+		excercises.save(excercise);
+		return excercise;
+
+	}
+
+	public void removeExcercise(Excercise excercise) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+
+		excercises.remove(excercise.getId());
 
 	}
 
@@ -256,4 +298,217 @@ public class DataManager {
 		}
 
 	}
+
+	public Excercise[] searchExcerciseByName(String search) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+
+		MongoCursor<Excercise> foundExcercises = excercises.find("{name:#}", Pattern.compile(search + ".*")).limit(10).as(Excercise.class);
+
+		List<Excercise> foundExcercisesList = new LinkedList<>();
+
+		while (foundExcercises.hasNext()) {
+			Excercise excercise = foundExcercises.next();
+			foundExcercisesList.add(excercise);
+		}
+		return foundExcercisesList.toArray(new Excercise[0]);
+
+	}
+
+	public void removeSet(Set set) {
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+		sets.remove(set.getId());
+	}
+
+	public Set insertSet(Set set) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+
+		sets.insert(set);
+		logger.error("saved set has id " + set.getId());
+
+		return set;
+	}
+
+	public Set updateSet(String id, Set set) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+
+		sets.update("{id:#}", id).with(set);
+		return set;
+
+	}
+
+	public Set saveSet(Set set) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+		sets.save(set);
+		return set;
+	}
+
+	public Set getSetById(String id) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+
+		MongoCursor<Set> foundSets = sets.find("{id:#}", id).as(Set.class);
+
+		if (foundSets.count() == 0) {
+			logger.debug("id " + id + " not found");
+			return null;
+		} else if (foundSets.count() == 1) {
+			Set set = foundSets.next();
+			return set;
+		} else {
+			throw new RuntimeException("found " + foundSets.count() + " sets with the id" + id);
+		}
+
+	}
+
+	public boolean removeSetById(String id) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+
+		MongoCursor<Set> foundSets = sets.find("{id:#}", id).as(Set.class);
+
+		if (foundSets.count() == 0) {
+			logger.debug("id " + id + " not found");
+			return false; // Set not found
+		} else {
+			int deleted = 0;
+			while (foundSets.hasNext()) {
+				Set set = foundSets.next();
+				logger.debug("deleting set with id" + set.getId());
+				sets.remove(set.getId());
+				deleted++;
+			}
+			logger.debug("deleted " + deleted + " set(s) with id " + id);
+			return true; // We got rid
+		}
+
+	}
+
+	public boolean setExists(String id) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+
+		MongoCursor<Set> foundSets = sets.find("{id:#}", id).as(Set.class);
+
+		if (foundSets.count() == 0) {
+			logger.debug("id " + id + " not found");
+			return false;
+		} else {
+			logger.debug("found " + foundSets.count() + " sets with id " + id);
+			return true;
+		}
+
+	}
+
+	public Mood insertMood(Mood mood) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+		moods.insert(mood);
+		logger.error(mood.getName() + " has id " + mood.getId());
+
+		return mood;
+	}
+
+	public Mood updateMood(String name, Mood mood) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+		moods.update("{name:#}", name).with(mood);
+		return mood;
+
+	}
+
+	public Mood saveMood(Mood mood) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+		moods.save(mood);
+		return mood;
+
+	}
+
+	public void removeMood(Mood mood) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+		moods.remove(mood.getId());
+
+	}
+
+	public Mood getMoodByName(String name) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+		MongoCursor<Mood> foundMoods = moods.find("{name:#}", name).as(Mood.class);
+
+		if (foundMoods.count() == 0) {
+			logger.debug("name " + name + " not found");
+			return null;
+		} else if (foundMoods.count() == 1) {
+			Mood mood = foundMoods.next();
+			return mood;
+		} else {
+			throw new RuntimeException("found " + foundMoods.count() + " moods with the name" + name);
+		}
+
+	}
+
+	public boolean removeMoodByName(String name) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+		MongoCursor<Mood> foundMoods = moods.find("{name:#}", name).as(Mood.class);
+
+		if (foundMoods.count() == 0) {
+			logger.debug("name " + name + " not found");
+			return false; // Mood not found
+		} else {
+			int deleted = 0;
+			while (foundMoods.hasNext()) {
+				Mood mood = foundMoods.next();
+				logger.debug("deleting mood with id" + mood.getId());
+				moods.remove(mood.getId());
+				deleted++;
+			}
+			logger.debug("deleted " + deleted + " mood(s) with name " + name);
+			return true; // We got rid
+		}
+
+	}
+
+	public boolean moodExists(String name) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+		MongoCursor<Mood> foundMoods = moods.find("{name:#}", name).as(Mood.class);
+
+		if (foundMoods.count() == 0) {
+			logger.debug("name " + name + " not found");
+			return false;
+		} else {
+			logger.debug("found " + foundMoods.count() + " moods with name " + name);
+			return true;
+		}
+
+	}
+
 }

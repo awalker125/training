@@ -1,5 +1,7 @@
 package uk.co.aw125.training.resources;
 
+import java.util.List;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -84,6 +86,20 @@ public class ExcerciseResource {
 		Excercise excercise = DataManager.getDataManager().getExcerciseByName(name);
 		if (null != excercise) {
 			return Response.ok().entity(excercise).build();
+		} else {
+			throw new NotFoundException("Excercise not found");
+		}
+	}
+
+	@GET
+	@Path("/search/{search}")
+	@ApiOperation(value = "Get excercise by excercise name using search")
+	@ApiResponses(value = {@ApiResponse(code = 404, message = "Excercise not found") })
+	public Response searchExcercisesByName(@ApiParam(value = "The name that needs to be fetched. Use excercise1 for testing. ", required = true) @PathParam("search") String search) {
+		
+		Excercise[] excercises =   DataManager.getDataManager().searchExcerciseByName(search);
+		if (null != excercises) {
+			return Response.ok().entity(excercises).build();
 		} else {
 			throw new NotFoundException("Excercise not found");
 		}
