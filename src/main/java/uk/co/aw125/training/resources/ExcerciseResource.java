@@ -91,15 +91,57 @@ public class ExcerciseResource {
 		}
 	}
 
+	//@GET
+	//@Path("/search/{search}")
+	//@ApiOperation(value = "Get excercise by excercise name using search")
+	//@ApiResponses(value = { @ApiResponse(code = 404, message = "Excercise not found") })
+	//public Response searchExcercisesByName(@ApiParam(value = "The name that needs to be fetched. Use excercise1 for testing. ", required = true) @PathParam("search") String search) {
+
+//		Excercise[] excercises = DataManager.getDataManager().searchExcerciseByName(search);
+	//	if (null != excercises) {
+	//		return Response.ok().entity(excercises).build();
+	//	} else {
+	//		throw new NotFoundException("Excercise not found");
+	//	}
+	//}
+
 	@GET
-	@Path("/search/{search}")
-	@ApiOperation(value = "Get excercise by excercise name using search")
-	@ApiResponses(value = {@ApiResponse(code = 404, message = "Excercise not found") })
-	public Response searchExcercisesByName(@ApiParam(value = "The name that needs to be fetched. Use excercise1 for testing. ", required = true) @PathParam("search") String search) {
-		
-		Excercise[] excercises =   DataManager.getDataManager().searchExcerciseByName(search);
-		if (null != excercises) {
-			return Response.ok().entity(excercises).build();
+	@Path("/search/name/{name}")
+	@ApiOperation(value = "Get excercise by eExcercise name using search")
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "Excercise not found") })
+	public Response searchExcerciseByName(@ApiParam(value = "The name that needs to be fetched.", required = true) @PathParam("name") String name) {
+
+		Excercise[] eExcercises = DataManager.getDataManager().searchExcerciseByName(name);
+		if (null != eExcercises && eExcercises.length > 0) {
+			return Response.ok().entity(eExcercises).build();
+		} else {
+			throw new NotFoundException("Excercise not found");
+		}
+	}
+
+	@GET
+	@Path("/search/tag/name/{name}")
+	@ApiOperation(value = "Get excercise by tag name using search")
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "Excercise not found") })
+	public Response searchExcerciseByTagName(@ApiParam(value = "The tag name that needs to be fetched.", required = true) @PathParam("name") String name) {
+
+		Excercise[] eExcercises = DataManager.getDataManager().searchExcerciseByTagName(name);
+		if (null != eExcercises && eExcercises.length > 0) {
+			return Response.ok().entity(eExcercises).build();
+		} else {
+			throw new NotFoundException("Excercise not found");
+		}
+	}
+
+	@GET
+	@Path("/search/tag/value/{value}")
+	@ApiOperation(value = "Get excercise by tag value using search")
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "Excercise not found") })
+	public Response searchExcerciseByTagValue(@ApiParam(value = "The tag name that needs to be fetched.", required = true) @PathParam("value") String value) {
+
+		Excercise[] eExcercises = DataManager.getDataManager().searchExcerciseByTagValue(value);
+		if (null != eExcercises && eExcercises.length > 0) {
+			return Response.ok().entity(eExcercises).build();
 		} else {
 			throw new NotFoundException("Excercise not found");
 		}

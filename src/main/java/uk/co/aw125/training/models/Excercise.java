@@ -1,9 +1,11 @@
 package uk.co.aw125.training.models;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jongo.marshall.jackson.oid.MongoId;
 import org.jongo.marshall.jackson.oid.MongoObjectId;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -16,9 +18,12 @@ public class Excercise {
 	@MongoObjectId
 	private String id;
 	String name;
-	String category;
 
+	List<Tag> tags;
+	
+	
 	public Excercise() {
+		tags = new LinkedList<Tag>();
 	}
 
 	public String getId() {
@@ -38,13 +43,14 @@ public class Excercise {
 		this.name = name;
 	}
 
-	@XmlElement(name = "category")
-	public String getCategory() {
-		return category;
+	
+	public List<Tag> getTags() {
+		return tags;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
 	}
+
 
 }

@@ -299,22 +299,22 @@ public class DataManager {
 
 	}
 
-	public Excercise[] searchExcerciseByName(String search) {
+	//public Excercise[] searchExcerciseByName(String search) {
 
-		Jongo jongo = new Jongo(mongoDatabase);
-		MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+	//	Jongo jongo = new Jongo(mongoDatabase);
+	//	MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
 
-		MongoCursor<Excercise> foundExcercises = excercises.find("{name:#}", Pattern.compile(search + ".*")).limit(10).as(Excercise.class);
+	//	MongoCursor<Excercise> foundExcercises = excercises.find("{name:#}", Pattern.compile(search + ".*")).limit(10).as(Excercise.class);
 
-		List<Excercise> foundExcercisesList = new LinkedList<>();
+	//	List<Excercise> foundExcercisesList = new LinkedList<>();
 
-		while (foundExcercises.hasNext()) {
-			Excercise excercise = foundExcercises.next();
-			foundExcercisesList.add(excercise);
-		}
-		return foundExcercisesList.toArray(new Excercise[0]);
+	//	while (foundExcercises.hasNext()) {
+	//		Excercise excercise = foundExcercises.next();
+	//		foundExcercisesList.add(excercise);
+	//	}
+	//	return foundExcercisesList.toArray(new Excercise[0]);
 
-	}
+	//}
 
 	public void removeSet(Set set) {
 		Jongo jongo = new Jongo(mongoDatabase);
@@ -511,4 +511,56 @@ public class DataManager {
 
 	}
 
+	public Excercise[] searchExcerciseByName(String search) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+
+		// MongoCursor<Excercise> foundExcercises = excercises.find("{name:#}", Pattern.compile(search + ".*")).limit(10).as(Excercise.class);
+
+		// Basically here if it contains the string we will return it. (Case insensitive)
+		MongoCursor<Excercise> foundExcercises = excercises.find("{name:#}", Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
+
+		List<Excercise> foundExcercisesList = new LinkedList<>();
+
+		while (foundExcercises.hasNext()) {
+			Excercise excercise = foundExcercises.next();
+			foundExcercisesList.add(excercise);
+		}
+		return foundExcercisesList.toArray(new Excercise[0]);
+	}
+
+	public Excercise[] searchExcerciseByTagName(String search) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+
+		// MongoCursor<Excercise> foundExcercises = excercises.find("tags: [{name: #}]", Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
+		MongoCursor<Excercise> foundExcercises = excercises.find("{tags: {$elemMatch: {name: #}}}", Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
+
+		List<Excercise> foundExcercisesList = new LinkedList<>();
+
+		while (foundExcercises.hasNext()) {
+			Excercise excercise = foundExcercises.next();
+			foundExcercisesList.add(excercise);
+		}
+		return foundExcercisesList.toArray(new Excercise[0]);
+	}
+
+	public Excercise[] searchExcerciseByTagValue(String search) {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+
+		MongoCursor<Excercise> foundExcercises = excercises.find("{tags: {$elemMatch: {value: #}}}", Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
+
+		List<Excercise> foundExcercisesList = new LinkedList<>();
+
+		while (foundExcercises.hasNext()) {
+			Excercise excercise = foundExcercises.next();
+			foundExcercisesList.add(excercise);
+		}
+		return foundExcercisesList.toArray(new Excercise[0]);
+	}
+	
 }
