@@ -273,7 +273,7 @@ public class DataManager {
 			while (foundExcercises.hasNext()) {
 				Excercise excercise = foundExcercises.next();
 				logger.debug("deleting excercise with id" + excercise.getId());
-				excercises.remove(excercise.getId());
+				excercises.remove(new ObjectId(excercise.getId()));
 				deleted++;
 			}
 			logger.debug("deleted " + deleted + " excercise(s) with name " + name);
@@ -299,22 +299,22 @@ public class DataManager {
 
 	}
 
-	//public Excercise[] searchExcerciseByName(String search) {
+	// public Excercise[] searchExcerciseByName(String search) {
 
-	//	Jongo jongo = new Jongo(mongoDatabase);
-	//	MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+	// Jongo jongo = new Jongo(mongoDatabase);
+	// MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
 
-	//	MongoCursor<Excercise> foundExcercises = excercises.find("{name:#}", Pattern.compile(search + ".*")).limit(10).as(Excercise.class);
+	// MongoCursor<Excercise> foundExcercises = excercises.find("{name:#}", Pattern.compile(search + ".*")).limit(10).as(Excercise.class);
 
-	//	List<Excercise> foundExcercisesList = new LinkedList<>();
+	// List<Excercise> foundExcercisesList = new LinkedList<>();
 
-	//	while (foundExcercises.hasNext()) {
-	//		Excercise excercise = foundExcercises.next();
-	//		foundExcercisesList.add(excercise);
-	//	}
-	//	return foundExcercisesList.toArray(new Excercise[0]);
+	// while (foundExcercises.hasNext()) {
+	// Excercise excercise = foundExcercises.next();
+	// foundExcercisesList.add(excercise);
+	// }
+	// return foundExcercisesList.toArray(new Excercise[0]);
 
-	//}
+	// }
 
 	public void removeSet(Set set) {
 		Jongo jongo = new Jongo(mongoDatabase);
@@ -511,6 +511,22 @@ public class DataManager {
 
 	}
 
+	public Excercise[] getExcercises() {
+
+		Jongo jongo = new Jongo(mongoDatabase);
+		MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+
+		MongoCursor<Excercise> foundExcercises = excercises.find().as(Excercise.class);
+
+		List<Excercise> foundExcercisesList = new LinkedList<>();
+
+		while (foundExcercises.hasNext()) {
+			Excercise excercise = foundExcercises.next();
+			foundExcercisesList.add(excercise);
+		}
+		return foundExcercisesList.toArray(new Excercise[0]);
+	}
+
 	public Excercise[] searchExcerciseByName(String search) {
 
 		Jongo jongo = new Jongo(mongoDatabase);
@@ -562,5 +578,5 @@ public class DataManager {
 		}
 		return foundExcercisesList.toArray(new Excercise[0]);
 	}
-	
+
 }

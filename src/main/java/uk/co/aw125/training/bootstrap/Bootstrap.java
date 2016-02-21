@@ -22,8 +22,8 @@ public class Bootstrap extends HttpServlet {
 
 		BeanConfig beanConfig = new BeanConfig();
 		beanConfig.setVersion("1.0.0");
-		beanConfig.setSchemes(new String[] { "http" });
-		beanConfig.setHost("localhost:8080");
+		beanConfig.setSchemes(new String[] { "https" });
+		beanConfig.setHost("localhost:10443");
 		beanConfig.setBasePath("/training/webapi");
 		beanConfig.setResourcePackage("uk.co.aw125.training.resources");
 		beanConfig.setScan(true);

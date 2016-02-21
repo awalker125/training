@@ -1,15 +1,17 @@
 package uk.co.aw125.training.resources;
 
-import java.util.List;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 import io.swagger.annotations.Api;
@@ -26,6 +28,33 @@ import uk.co.aw125.training.models.Excercise;
 @Api(value = "/excercise", description = "Operations about excercise")
 @Produces({ "application/json", "application/xml" })
 public class ExcerciseResource {
+
+	@GET
+	@ApiOperation(value = "Get excercises")
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "No excercises found") })
+	public Response getExcercises(@Context HttpHeaders headers) {
+
+		try {
+			String username = headers.getRequestHeader("username").get(0);
+			String api_key = headers.getRequestHeader("api_key").get(0);
+			if (username == null || username.isEmpty()) {
+				throw new NotAuthorizedException(Response.status(403).entity("").build());
+			}
+
+			if (api_key == null || api_key.isEmpty()) {
+				throw new NotAuthorizedException(Response.status(403).entity("").build());
+			}
+		} catch (NullPointerException npe) {
+			throw new NotAuthorizedException(Response.status(403).entity("").build());
+		}
+
+		Excercise[] excercises = DataManager.getDataManager().getExcercises();
+		if (null != excercises && excercises.length > 0) {
+			return Response.ok().entity(excercises).build();
+		} else {
+			throw new NotFoundException("Excercises not found");
+		}
+	}
 
 	@POST
 	@ApiOperation(value = "Create excercise", notes = "This can only be done by the logged in excercise.")
@@ -90,20 +119,6 @@ public class ExcerciseResource {
 			throw new NotFoundException("Excercise not found");
 		}
 	}
-
-	//@GET
-	//@Path("/search/{search}")
-	//@ApiOperation(value = "Get excercise by excercise name using search")
-	//@ApiResponses(value = { @ApiResponse(code = 404, message = "Excercise not found") })
-	//public Response searchExcercisesByName(@ApiParam(value = "The name that needs to be fetched. Use excercise1 for testing. ", required = true) @PathParam("search") String search) {
-
-//		Excercise[] excercises = DataManager.getDataManager().searchExcerciseByName(search);
-	//	if (null != excercises) {
-	//		return Response.ok().entity(excercises).build();
-	//	} else {
-	//		throw new NotFoundException("Excercise not found");
-	//	}
-	//}
 
 	@GET
 	@Path("/search/name/{name}")
