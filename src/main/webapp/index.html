@@ -12,11 +12,11 @@
 <title>Training</title>
 
 <!-- Bootstrap core CSS -->
-<link href="lib/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<!-- <link href="lib/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet">  -->
 
 
 <!-- Custom styles for this template -->
-<link href="css/cover.css" rel="stylesheet">
+<!-- <link href="css/cover.css" rel="stylesheet"> -->
 
 
 
@@ -58,26 +58,35 @@
 					<p class="lead">Facebook login</p>
 
 					<div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false"
-						data-auto-logout-link="true" onlogin="customLoginHandler();"></div>
+						data-auto-logout-link="true" onlogin="customLoginHandler();" data-scope="basic_info,public_profile,email"></div>
 					<div id="status"></div>
 
-					<div id="example"></div>
 
 
-					<div id="excercises-app">
-						<ul class="excercises-list"></ul>
 
-						<div class="excercise-create">
-							<b>Add a excercise</b> <label>Name: <input id="excercise-name" type="text"></label>
-							<button class="btn btn-lg btn-default">Create Excecise</button>
-
-						</div>
+					<div class="header">
+						<input type="text" id="searchKey" />
+						<button id="btnSearch">Search</button>
+						<button id="btnAdd">New Excercise</button>
 					</div>
 
-					<script type="text/template" id="excercise-item-tmpl">
-  <p><a href="/training/webapi/excercise/<%= name %>"><%= name %></a></p>
-  <button class="remove">x</button>
-</script>
+
+					<div class="leftArea">
+						<ul id="excerciseList"></ul>
+					</div>
+
+					<form id="excerciseForm">
+
+						<div class="mainArea">
+
+							<label>Id:</label> <input id="excerciseId" name="id" type="text" disabled /> <label>Name:</label> <input
+								type="text" id="name" name="name" required>
+
+							<button id="btnSave">Save</button>
+							<button id="btnDelete">Delete</button>
+						</div>
+					</form>
+
 
 
 
@@ -106,11 +115,13 @@
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-	<script src="lib/bootstrap-3.3.6/js/bootstrap.min.js"></script>
-	<script src="lib/underscore/underscore.js"></script>
-	<script src="lib/backbone/backbone.js"></script>
+	<!-- 	<script src="lib/bootstrap-3.3.6/js/bootstrap.min.js"></script> -->
+	<!-- <script src="lib/underscore/underscore.js"></script>
+	<script src="lib/backbone/backbone.js"></script> -->
 	<script src="js/facebook.js"></script>
-	<script src="js/hellobackbone.js"></script>
+
 	<script src="js/execercise-app.js"></script>
+
+
 </body>
 </html>
