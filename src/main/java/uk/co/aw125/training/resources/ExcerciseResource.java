@@ -21,10 +21,11 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import uk.co.aw125.training.data.DataManager;
 import uk.co.aw125.training.exceptions.CustomBadRequestException;
+import uk.co.aw125.training.exceptions.CustomNotFoundException;
 import uk.co.aw125.training.models.Excercise;
 
 @Path("/excercise")
-@Api(value = "/excercise", description = "Operations about excercise")
+@Api(value = "/excercise", description = "Operations about excercise", tags = {"Excercise"})
 @Produces({"application/json", "application/xml"})
 public class ExcerciseResource {
 
@@ -33,25 +34,25 @@ public class ExcerciseResource {
   @ApiResponses(value = {@ApiResponse(code = 404, message = "No excercises found")})
   public Response getExcercises(@Context HttpHeaders headers) {
 
-    try {
-      String username = headers.getRequestHeader("username").get(0);
-      String api_key = headers.getRequestHeader("api_key").get(0);
-      if (username == null || username.isEmpty()) {
-        throw new NotAuthorizedException(Response.status(403).entity("").build());
-      }
-
-      if (api_key == null || api_key.isEmpty()) {
-        throw new NotAuthorizedException(Response.status(403).entity("").build());
-      }
-    } catch (NullPointerException npe) {
-      throw new NotAuthorizedException(Response.status(403).entity("").build());
-    }
+//    try {
+//      String username = headers.getRequestHeader("username").get(0);
+//      String api_key = headers.getRequestHeader("api_key").get(0);
+//      if (username == null || username.isEmpty()) {
+//        throw new NotAuthorizedException(Response.status(403).entity("").build());
+//      }
+//
+//      if (api_key == null || api_key.isEmpty()) {
+//        throw new NotAuthorizedException(Response.status(403).entity("").build());
+//      }
+//    } catch (NullPointerException npe) {
+//      throw new NotAuthorizedException(Response.status(403).entity("").build());
+//    }
 
     Excercise[] excercises = DataManager.getDataManager().getExcercises();
     if (null != excercises && excercises.length > 0) {
       return Response.ok().entity(excercises).build();
     } else {
-      throw new NotFoundException("Excercises not found");
+      throw new CustomNotFoundException("Excercises not found");
     }
   }
 
@@ -90,7 +91,7 @@ public class ExcerciseResource {
 
         return Response.ok().entity("").build();
       } else {
-        throw new NotFoundException("Excercise not found");
+        throw new CustomNotFoundException("Excercise not found");
       }
     } else {
       throw new CustomBadRequestException(
@@ -107,7 +108,7 @@ public class ExcerciseResource {
     if (DataManager.getDataManager().removeExcerciseByName(name)) {
       return Response.ok().entity("").build();
     } else {
-      throw new NotFoundException("Excercise not found");
+      throw new CustomNotFoundException("Excercise not found");
     }
   }
 
@@ -121,7 +122,7 @@ public class ExcerciseResource {
     if (null != excercise) {
       return Response.ok().entity(excercise).build();
     } else {
-      throw new NotFoundException("Excercise not found");
+      throw new CustomNotFoundException("Excercise not found");
     }
   }
 
@@ -135,7 +136,7 @@ public class ExcerciseResource {
     if (null != eExcercises && eExcercises.length > 0) {
       return Response.ok().entity(eExcercises).build();
     } else {
-      throw new NotFoundException("Excercise not found");
+      throw new CustomNotFoundException("Excercise not found");
     }
   }
 
@@ -150,7 +151,7 @@ public class ExcerciseResource {
     if (null != eExcercises && eExcercises.length > 0) {
       return Response.ok().entity(eExcercises).build();
     } else {
-      throw new NotFoundException("Excercise not found");
+      throw new CustomNotFoundException("Excercise not found");
     }
   }
 
@@ -165,7 +166,7 @@ public class ExcerciseResource {
     if (null != eExcercises && eExcercises.length > 0) {
       return Response.ok().entity(eExcercises).build();
     } else {
-      throw new NotFoundException("Excercise not found");
+      throw new CustomNotFoundException("Excercise not found");
     }
   }
 

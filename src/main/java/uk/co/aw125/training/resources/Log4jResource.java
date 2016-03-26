@@ -30,6 +30,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import uk.co.aw125.training.exceptions.CustomBadRequestException;
+import uk.co.aw125.training.exceptions.CustomNotFoundException;
 import uk.co.aw125.training.models.LoggerConfigModel;
 
 @Path("/log4j")
@@ -62,7 +63,7 @@ public class Log4jResource {
 
     if (LoggerConfigModelsList.isEmpty()) {
       logger.error("Could not find any loggers");
-      throw new NotFoundException();
+      throw new CustomNotFoundException("Could not find any loggers");
     }
 
     LoggerConfigModel[] foundLoggerConfigs = LoggerConfigModelsList.toArray(new LoggerConfigModel[0]);
@@ -93,7 +94,7 @@ public class Log4jResource {
     }
 
     logger.error("LoggerConfig not found with name " + name);
-    throw new NotFoundException();
+    throw new CustomNotFoundException("Logger not found");
 
   }
 
@@ -115,7 +116,7 @@ public class Log4jResource {
 
     if (targetLevel == null) {
       logger.error("Could not convert " + level + " to a log4j level");
-      throw new BadRequestException("level" + level + " is invalid. Try one of FATAL,ERROR,WARN,INFO,DEBUG,TRACE");
+      throw new CustomBadRequestException("level is invalid. Try one of FATAL,ERROR,WARN,INFO,DEBUG,TRACE");
     }
 
     LoggerContext logContext = (LoggerContext) LogManager.getContext(false);
@@ -141,7 +142,7 @@ public class Log4jResource {
     }
 
     logger.error("LoggerConfig not found with name " + name);
-    throw new uk.co.aw125.training.exceptions.CustomNotFoundException("Logger not found");
+    throw new CustomNotFoundException("Logger not found");
 
   }
 

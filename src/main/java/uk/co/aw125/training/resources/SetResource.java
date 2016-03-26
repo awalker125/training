@@ -20,7 +20,7 @@ import uk.co.aw125.training.exceptions.CustomBadRequestException;
 import uk.co.aw125.training.models.Set;
 
 @Path("/set")
-@Api(value = "/set", description = "Operations about set")
+@Api(value = "/set", description = "Operations about set" ,tags = {"Set"})
 @Produces({ "application/json", "application/xml" })
 public class SetResource {
 

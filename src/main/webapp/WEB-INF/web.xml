@@ -33,9 +33,8 @@
 	</servlet>
 	<servlet>
 		<description>Swagger Bootstrap</description>
-		<display-name>Bootstrap</display-name>
 		<servlet-name>Bootstrap</servlet-name>
-		<servlet-class>uk.co.aw125.training.bootstrap.Bootstrap</servlet-class>
+		<servlet-class>uk.co.aw125.training.bootstrap.BootStrap</servlet-class>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 	<servlet-mapping>
