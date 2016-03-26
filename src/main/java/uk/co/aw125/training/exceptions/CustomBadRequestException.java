@@ -3,7 +3,7 @@ package uk.co.aw125.training.exceptions;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-public class InternalErrorException extends WebApplicationException {
+public class CustomBadRequestException extends WebApplicationException {
 
 	
 	/**
@@ -12,7 +12,7 @@ public class InternalErrorException extends WebApplicationException {
 	 * @param message
 	 *            the String that is the entity of the 404 response.
 	 */
-	public InternalErrorException(String message) {
-		super(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(message).type("text/plain").build());
+	public CustomBadRequestException(String message) {
+		super(Response.status(Response.Status.BAD_REQUEST).entity(message).type("text/plain").build());
 	}
 }

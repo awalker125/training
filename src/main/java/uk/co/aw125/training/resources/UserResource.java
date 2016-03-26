@@ -2,10 +2,10 @@ package uk.co.aw125.training.resources;
 
 import io.swagger.annotations.*;
 import uk.co.aw125.training.data.DataManager;
-import uk.co.aw125.training.exceptions.InternalErrorException;
+import uk.co.aw125.training.exceptions.CustomInternalErrorException;
 import uk.co.aw125.training.exceptions.AlreadyExistsException;
 import uk.co.aw125.training.exceptions.ImmutableException;
-import uk.co.aw125.training.exceptions.NotFoundException;
+import uk.co.aw125.training.exceptions.CustomNotFoundException;
 import uk.co.aw125.training.models.User;
 
 import javax.ws.rs.core.Response;
@@ -50,7 +50,7 @@ public class UserResource {
 
 				return Response.ok().entity("").build();
 			} else {
-				throw new NotFoundException("User not found");
+				throw new CustomNotFoundException("User not found");
 			}
 		} else {
 			throw new ImmutableException("username specified in path does not match username in the user object. username is immutable. Please create a new user instead");
@@ -66,7 +66,7 @@ public class UserResource {
 		if (DataManager.getDataManager().removeUserByUsername(username)) {
 			return Response.ok().entity("").build();
 		} else {
-			throw new NotFoundException("User not found");
+			throw new CustomNotFoundException("User not found");
 		}
 	}
 
@@ -79,7 +79,7 @@ public class UserResource {
 		if (null != user) {
 			return Response.ok().entity(user).build();
 		} else {
-			throw new NotFoundException("User not found");
+			throw new CustomNotFoundException("User not found");
 		}
 	}
 
