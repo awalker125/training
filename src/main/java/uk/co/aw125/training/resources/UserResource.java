@@ -2,9 +2,9 @@ package uk.co.aw125.training.resources;
 
 import io.swagger.annotations.*;
 import uk.co.aw125.training.data.DataManager;
-import uk.co.aw125.training.exceptions.CustomInternalErrorException;
-import uk.co.aw125.training.exceptions.AlreadyExistsException;
-import uk.co.aw125.training.exceptions.ImmutableException;
+import uk.co.aw125.training.exceptions.CustomBadRequestException;
+import uk.co.aw125.training.exceptions.CustomInternalServerErrorException;
+
 import uk.co.aw125.training.exceptions.CustomNotFoundException;
 import uk.co.aw125.training.models.User;
 
@@ -28,7 +28,7 @@ public class UserResource {
 
 		if (dataManager.userExists(user.getUsername())) {
 
-			throw new AlreadyExistsException(user.getUsername() + " already exists");
+			throw new CustomBadRequestException(user.getUsername() + " already exists");
 		}
 		User inserted = dataManager.saveUser(user);
 		return Response.ok().entity(inserted).build();
@@ -53,7 +53,7 @@ public class UserResource {
 				throw new CustomNotFoundException("User not found");
 			}
 		} else {
-			throw new ImmutableException("username specified in path does not match username in the user object. username is immutable. Please create a new user instead");
+			throw new CustomBadRequestException("username specified in path does not match username in the user object. username is immutable. Please create a new user instead");
 		}
 	}
 

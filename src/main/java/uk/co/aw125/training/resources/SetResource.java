@@ -16,8 +16,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import uk.co.aw125.training.data.DataManager;
-import uk.co.aw125.training.exceptions.AlreadyExistsException;
-import uk.co.aw125.training.exceptions.ImmutableException;
+import uk.co.aw125.training.exceptions.CustomBadRequestException;
 import uk.co.aw125.training.models.Set;
 
 @Path("/set")
@@ -54,7 +53,7 @@ public class SetResource {
 				throw new NotFoundException("Set not found");
 			}
 		} else {
-			throw new ImmutableException("id specified in path does not match id in the set object. id is immutable. Please create a new set instead");
+			throw new CustomBadRequestException("id specified in path does not match id in the set object. id is immutable. Please create a new set instead");
 		}
 	}
 

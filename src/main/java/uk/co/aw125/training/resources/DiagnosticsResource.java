@@ -9,15 +9,15 @@ import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.hpe.devops.odam.bootstrap.Launcher;
-import com.hpe.devops.odam.config.ConfigManager;
-import com.hpe.devops.odam.data.DataManager;
-import com.hpe.devops.odam.model.client.RuntimeStats;
-import com.hpe.devops.odam.model.client.Stats;
-import com.hpe.devops.odam.version.Version;
+
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import uk.co.aw125.training.bootstrap.Launcher;
+import uk.co.aw125.training.config.ConfigManager;
+import uk.co.aw125.training.data.DataManager;
+import uk.co.aw125.training.models.RuntimeStats;
+import uk.co.aw125.training.version.Version;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -44,7 +44,7 @@ public class DiagnosticsResource {
 
     logger.trace("checking mongo db");
     try {
-      boolean canWrite = DataManager.getDataManager().testMongo();
+      boolean canWrite = DataManager.getDataManager().verifyDatabaseAlive();
       if (canWrite) {
         return Response.ok("OK").build();
       } else {
