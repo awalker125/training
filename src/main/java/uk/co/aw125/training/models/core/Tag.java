@@ -1,4 +1,4 @@
-package uk.co.aw125.training.models;
+package uk.co.aw125.training.models.core;
 
 public class Tag {
 

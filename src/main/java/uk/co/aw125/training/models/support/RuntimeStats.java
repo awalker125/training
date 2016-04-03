@@ -1,4 +1,4 @@
-package uk.co.aw125.training.models;
+package uk.co.aw125.training.models.support;
 
 import uk.co.aw125.training.helpers.ThreadUtilities;
 

@@ -12,8 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import uk.co.aw125.training.data.DataManager;
-import uk.co.aw125.training.models.Excercise;
-import uk.co.aw125.training.models.Tag;
+import uk.co.aw125.training.models.core.Excercise;
+import uk.co.aw125.training.models.core.Tag;
 
 public class Launcher implements ServletContextListener {
 

@@ -1,5 +1,6 @@
 package uk.co.aw125.training.resources;
 
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotAuthorizedException;
@@ -22,7 +23,7 @@ import io.swagger.annotations.ApiResponses;
 import uk.co.aw125.training.data.DataManager;
 import uk.co.aw125.training.exceptions.CustomBadRequestException;
 import uk.co.aw125.training.exceptions.CustomNotFoundException;
-import uk.co.aw125.training.models.Excercise;
+import uk.co.aw125.training.models.core.Excercise;
 
 @Path("/excercise")
 @Api(value = "/excercise", description = "Operations about excercise", tags = {"Excercise"})
@@ -60,7 +61,7 @@ public class ExcerciseResource {
   @ApiOperation(value = "Create excercise", notes = "This can only be done by the logged in excercise.")
   @ApiResponses(
       value = {@ApiResponse(code = 400, message = "Invalid excercise supplied"), @ApiResponse(code = 400, message = "Excercise already exists")})
-  public Response createExcercise(@ApiParam(value = "Created excercise object", required = true) Excercise excercise) {
+  public Response createExcercise(@ApiParam(value = "Created excercise object", required = true) @Valid Excercise excercise) {
 
     DataManager dataManager = DataManager.getDataManager();
 

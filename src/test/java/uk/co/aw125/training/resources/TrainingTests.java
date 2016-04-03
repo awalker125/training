@@ -15,7 +15,7 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
-import uk.co.aw125.training.models.User;
+import uk.co.aw125.training.models.core.User;
 
 public class TrainingTests extends JerseyTest {
 

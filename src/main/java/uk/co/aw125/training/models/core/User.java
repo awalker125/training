@@ -1,4 +1,4 @@
-package uk.co.aw125.training.models;
+package uk.co.aw125.training.models.core;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

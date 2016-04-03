@@ -6,7 +6,7 @@ import uk.co.aw125.training.exceptions.CustomBadRequestException;
 import uk.co.aw125.training.exceptions.CustomInternalServerErrorException;
 
 import uk.co.aw125.training.exceptions.CustomNotFoundException;
-import uk.co.aw125.training.models.User;
+import uk.co.aw125.training.models.core.User;
 
 import javax.ws.rs.core.Response;
 

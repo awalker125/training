@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import uk.co.aw125.training.exceptions.CustomBadRequestException;
 import uk.co.aw125.training.exceptions.CustomNotFoundException;
-import uk.co.aw125.training.models.LoggerConfigModel;
+import uk.co.aw125.training.models.support.LoggerConfigModel;
 
 @Path("/log4j")
 @Api(value = "/log4j", tags = {"Log4j"})

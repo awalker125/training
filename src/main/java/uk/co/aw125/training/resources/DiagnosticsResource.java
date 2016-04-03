@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import uk.co.aw125.training.bootstrap.Launcher;
 import uk.co.aw125.training.config.ConfigManager;
 import uk.co.aw125.training.data.DataManager;
-import uk.co.aw125.training.models.RuntimeStats;
+import uk.co.aw125.training.models.support.RuntimeStats;
 import uk.co.aw125.training.version.Version;
 
 // TODO: Auto-generated Javadoc

@@ -17,7 +17,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import uk.co.aw125.training.data.DataManager;
 import uk.co.aw125.training.exceptions.CustomBadRequestException;
-import uk.co.aw125.training.models.Set;
+import uk.co.aw125.training.models.core.Set;
+
 
 @Path("/set")
 @Api(value = "/set", description = "Operations about set" ,tags = {"Set"})
@@ -36,26 +37,26 @@ public class SetResource {
 
 	}
 
-	@PUT
-	@Path("/{id}")
-	@ApiOperation(value = "Updated set", notes = "This can only be done by the logged in set.")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid set supplied"), @ApiResponse(code = 404, message = "Set not found"), @ApiResponse(code = 400, message = "id specified in path does not match id in the set object. id is immutable. Please create a new set instead") })
-	public Response updateSet(@ApiParam(value = "id that need to be updated", required = true) @PathParam("id") String id, @ApiParam(value = "Updated set object", required = true) Set set) {
+//	@PUT
+//	@Path("/{id}")
+//	@ApiOperation(value = "Updated set", notes = "This can only be done by the logged in set.")
+//	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid set supplied"), @ApiResponse(code = 404, message = "Set not found"), @ApiResponse(code = 400, message = "id specified in path does not match id in the set object. id is immutable. Please create a new set instead") })
+//	public Response updateSet(@ApiParam(value = "id that need to be updated", required = true) @PathParam("id") String id, @ApiParam(value = "Updated set object", required = true) Set set) {
 
-		if (id.equals(set.getId())) {
+	//	if (id.equals(set.getId())) {
 
-			DataManager dataManager = DataManager.getDataManager();
+	//		DataManager dataManager = DataManager.getDataManager();
 
-			Set updated = dataManager.updateSet(id, set);
-			if (updated != null) {
-				return Response.ok().entity("").build();
-			} else {
-				throw new NotFoundException("Set not found");
-			}
-		} else {
-			throw new CustomBadRequestException("id specified in path does not match id in the set object. id is immutable. Please create a new set instead");
-		}
-	}
+	//		Set updated = dataManager.updateSet(id, set);
+	//		if (updated != null) {
+	//			return Response.ok().entity("").build();
+	//		} else {
+	//			throw new NotFoundException("Set not found");
+	//		}
+	//	} else {
+	//		throw new CustomBadRequestException("id specified in path does not match id in the set object. id is immutable. Please create a new set instead");
+	//	}
+	//}
 
 	@DELETE
 	@Path("/{id}")
