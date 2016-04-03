@@ -74,31 +74,6 @@ public class ExcerciseResource {
 
   }
 
-  @PUT
-  @Path("/{name}")
-  @ApiOperation(value = "Updated excercise", notes = "This can only be done by the logged in excercise.")
-  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid excercise supplied"), @ApiResponse(code = 404, message = "Excercise not found"),
-      @ApiResponse(code = 400,
-          message = "name specified in path does not match name in the excercise object. name is immutable. Please create a new excercise instead")})
-  public Response updateExcercise(@ApiParam(value = "name that need to be deleted", required = true) @PathParam("name") String name,
-      @ApiParam(value = "Updated excercise object", required = true) Excercise excercise) {
-
-    if (name.equals(excercise.getName())) {
-
-      DataManager dataManager = DataManager.getDataManager();
-
-      Excercise updated = dataManager.updateExcercise(name, excercise);
-      if (updated != null) {
-
-        return Response.ok().entity("").build();
-      } else {
-        throw new CustomNotFoundException("Excercise not found");
-      }
-    } else {
-      throw new CustomBadRequestException(
-          "name specified in path does not match name in the excercise object. name is immutable. Please create a new excercise instead");
-    }
-  }
 
   @DELETE
   @Path("/{name}")
