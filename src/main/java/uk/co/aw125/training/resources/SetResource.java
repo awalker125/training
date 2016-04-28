@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import uk.co.aw125.training.auth.AuthenticationCache;
+import uk.co.aw125.training.auth.AuthenticationManager;
 import uk.co.aw125.training.data.DataManager;
 import uk.co.aw125.training.exceptions.CustomBadRequestException;
 import uk.co.aw125.training.exceptions.CustomNotAuthorizedException;
@@ -36,42 +36,14 @@ public class SetResource {
   private static final Logger logger = LogManager.getLogger(SetResource.class);
 
 
-  private void authenticate(HttpHeaders headers) {
-    try {
-      String username = headers.getRequestHeader("username").get(0);
-      String api_key = headers.getRequestHeader("api_key").get(0);
-      if (username == null || username.isEmpty()) {
-        throw new CustomNotAuthorizedException("username not set");
-      }
-
-      if (api_key == null || api_key.isEmpty()) {
-        throw new CustomNotAuthorizedException("api key not set");
-      }
-
-      AuthenticationCache authenticationCache = AuthenticationCache.getAuthenticationCache();
-
-      if (authenticationCache.isAuthenticated(username, api_key)) {
-        logger.info(username + " is authorized with key " + api_key);
-      } else {
-        if (!authenticationCache.authenticate(username, api_key)) {
-          throw new CustomNotAuthorizedException("Not authourized");
-        }
-      }
-
-    } catch (NullPointerException npe) {
-      logger.error("unexpected null pointer during authentication", npe);
-      throw new CustomNotAuthorizedException("unable to retrieve authentication data");
-
-    }
-  }
-
   @POST
   @ApiOperation(value = "Create set", notes = "This can only be done by the logged in set.")
   @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid set supplied"), @ApiResponse(code = 400, message = "Set already exists")})
   public Response createSet(@ApiParam(value = "Created set object", required = true) @Valid Set set, @Context HttpHeaders headers) {
 
-    //This will throw a 403 if auth fails
-    authenticate(headers);
+    // This will throw a 403 if auth fails
+    AuthenticationManager.getAuthenticationCache().authenticate(headers);
+
 
     DataManager dataManager = DataManager.getDataManager();
 
@@ -79,32 +51,6 @@ public class SetResource {
     return Response.ok().entity(inserted).build();
 
   }
-
-  // @PUT
-  // @Path("/{id}")
-  // @ApiOperation(value = "Updated set", notes = "This can only be done by the logged in set.")
-  // @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid set supplied"),
-  // @ApiResponse(code = 404, message = "Set not found"), @ApiResponse(code = 400, message = "id
-  // specified in path does not match id in the set object. id is immutable. Please create a new set
-  // instead") })
-  // public Response updateSet(@ApiParam(value = "id that need to be updated", required = true)
-  // @PathParam("id") String id, @ApiParam(value = "Updated set object", required = true) Set set) {
-
-  // if (id.equals(set.getId())) {
-
-  // DataManager dataManager = DataManager.getDataManager();
-
-  // Set updated = dataManager.updateSet(id, set);
-  // if (updated != null) {
-  // return Response.ok().entity("").build();
-  // } else {
-  // throw new NotFoundException("Set not found");
-  // }
-  // } else {
-  // throw new CustomBadRequestException("id specified in path does not match id in the set object.
-  // id is immutable. Please create a new set instead");
-  // }
-  // }
 
   @DELETE
   @Path("/{id}")

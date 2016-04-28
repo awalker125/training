@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import uk.co.aw125.training.auth.AuthenticationManager;
 import uk.co.aw125.training.data.DataManager;
 import uk.co.aw125.training.exceptions.CustomBadRequestException;
 import uk.co.aw125.training.exceptions.CustomNotFoundException;
@@ -35,19 +36,8 @@ public class ExcerciseResource {
   @ApiResponses(value = {@ApiResponse(code = 404, message = "No excercises found")})
   public Response getExcercises(@Context HttpHeaders headers) {
 
-//    try {
-//      String username = headers.getRequestHeader("username").get(0);
-//      String api_key = headers.getRequestHeader("api_key").get(0);
-//      if (username == null || username.isEmpty()) {
-//        throw new NotAuthorizedException(Response.status(403).entity("").build());
-//      }
-//
-//      if (api_key == null || api_key.isEmpty()) {
-//        throw new NotAuthorizedException(Response.status(403).entity("").build());
-//      }
-//    } catch (NullPointerException npe) {
-//      throw new NotAuthorizedException(Response.status(403).entity("").build());
-//    }
+    AuthenticationManager authenticationManager = AuthenticationManager.getAuthenticationCache();
+    authenticationManager.authenticate(headers);
 
     Excercise[] excercises = DataManager.getDataManager().getExcercises();
     if (null != excercises && excercises.length > 0) {
@@ -61,7 +51,11 @@ public class ExcerciseResource {
   @ApiOperation(value = "Create excercise", notes = "This can only be done by the logged in excercise.")
   @ApiResponses(
       value = {@ApiResponse(code = 400, message = "Invalid excercise supplied"), @ApiResponse(code = 400, message = "Excercise already exists")})
-  public Response createExcercise(@ApiParam(value = "Created excercise object", required = true) @Valid Excercise excercise) {
+  public Response createExcercise(@ApiParam(value = "Created excercise object", required = true) @Valid Excercise excercise,
+      @Context HttpHeaders headers) {
+
+    AuthenticationManager authenticationManager = AuthenticationManager.getAuthenticationCache();
+    authenticationManager.authenticate(headers);
 
     DataManager dataManager = DataManager.getDataManager();
 
@@ -79,7 +73,11 @@ public class ExcerciseResource {
   @Path("/{name}")
   @ApiOperation(value = "Delete excercise", notes = "This can only be done by the logged in excercise.")
   @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid name supplied"), @ApiResponse(code = 404, message = "Excercise not found")})
-  public Response deleteExcercise(@ApiParam(value = "The name that needs to be deleted", required = true) @PathParam("name") String name) {
+  public Response deleteExcercise(@ApiParam(value = "The name that needs to be deleted", required = true) @PathParam("name") String name,
+      @Context HttpHeaders headers) {
+
+    AuthenticationManager authenticationManager = AuthenticationManager.getAuthenticationCache();
+    authenticationManager.authenticate(headers);
 
     if (DataManager.getDataManager().removeExcerciseByName(name)) {
       return Response.ok().entity("").build();
@@ -93,7 +91,12 @@ public class ExcerciseResource {
   @ApiOperation(value = "Get excercise by excercise name", response = Excercise.class)
   @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid name supplied"), @ApiResponse(code = 404, message = "Excercise not found")})
   public Response getExcerciseByName(
-      @ApiParam(value = "The name that needs to be fetched. Use excercise1 for testing. ", required = true) @PathParam("name") String name) {
+      @ApiParam(value = "The name that needs to be fetched. Use excercise1 for testing. ", required = true) @PathParam("name") String name,
+      @Context HttpHeaders headers) {
+
+    AuthenticationManager authenticationManager = AuthenticationManager.getAuthenticationCache();
+    authenticationManager.authenticate(headers);
+
     Excercise excercise = DataManager.getDataManager().getExcerciseByName(name);
     if (null != excercise) {
       return Response.ok().entity(excercise).build();
@@ -106,7 +109,11 @@ public class ExcerciseResource {
   @Path("/search/name/{name}")
   @ApiOperation(value = "Get excercise by eExcercise name using search")
   @ApiResponses(value = {@ApiResponse(code = 404, message = "Excercise not found")})
-  public Response searchExcerciseByName(@ApiParam(value = "The name that needs to be fetched.", required = true) @PathParam("name") String name) {
+  public Response searchExcerciseByName(@ApiParam(value = "The name that needs to be fetched.", required = true) @PathParam("name") String name,
+      @Context HttpHeaders headers) {
+
+    AuthenticationManager authenticationManager = AuthenticationManager.getAuthenticationCache();
+    authenticationManager.authenticate(headers);
 
     Excercise[] eExcercises = DataManager.getDataManager().searchExcerciseByName(name);
     if (null != eExcercises && eExcercises.length > 0) {
@@ -121,7 +128,10 @@ public class ExcerciseResource {
   @ApiOperation(value = "Get excercise by tag name using search")
   @ApiResponses(value = {@ApiResponse(code = 404, message = "Excercise not found")})
   public Response searchExcerciseByTagName(
-      @ApiParam(value = "The tag name that needs to be fetched.", required = true) @PathParam("name") String name) {
+      @ApiParam(value = "The tag name that needs to be fetched.", required = true) @PathParam("name") String name, @Context HttpHeaders headers) {
+
+    AuthenticationManager authenticationManager = AuthenticationManager.getAuthenticationCache();
+    authenticationManager.authenticate(headers);
 
     Excercise[] eExcercises = DataManager.getDataManager().searchExcerciseByTagName(name);
     if (null != eExcercises && eExcercises.length > 0) {
@@ -136,7 +146,10 @@ public class ExcerciseResource {
   @ApiOperation(value = "Get excercise by tag value using search")
   @ApiResponses(value = {@ApiResponse(code = 404, message = "Excercise not found")})
   public Response searchExcerciseByTagValue(
-      @ApiParam(value = "The tag name that needs to be fetched.", required = true) @PathParam("value") String value) {
+      @ApiParam(value = "The tag name that needs to be fetched.", required = true) @PathParam("value") String value, @Context HttpHeaders headers) {
+
+    AuthenticationManager authenticationManager = AuthenticationManager.getAuthenticationCache();
+    authenticationManager.authenticate(headers);
 
     Excercise[] eExcercises = DataManager.getDataManager().searchExcerciseByTagValue(value);
     if (null != eExcercises && eExcercises.length > 0) {

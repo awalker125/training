@@ -8,9 +8,11 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 import org.jongo.MongoCursor;
+
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
@@ -299,50 +301,33 @@ public class DataManager {
 
   }
 
-  // public Excercise[] searchExcerciseByName(String search) {
 
+  // public void removeSet(Set set) {
   // Jongo jongo = new Jongo(mongoDatabase);
-  // MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
-
-  // MongoCursor<Excercise> foundExcercises = excercises.find("{name:#}", Pattern.compile(search +
-  // ".*")).limit(10).as(Excercise.class);
-
-  // List<Excercise> foundExcercisesList = new LinkedList<>();
-
-  // while (foundExcercises.hasNext()) {
-  // Excercise excercise = foundExcercises.next();
-  // foundExcercisesList.add(excercise);
-  // }
-  // return foundExcercisesList.toArray(new Excercise[0]);
-
+  // MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+  // sets.remove(set.get_id());
   // }
 
-  public void removeSet(Set set) {
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
-    sets.remove(set.get_id());
-  }
-
-  public Set insertSet(Set set) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
-
-    sets.insert(set);
-    logger.error("saved set has id " + set.get_id());
-
-    return set;
-  }
-
-  public Set updateSet(String id, Set set) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
-
-    sets.update("{id:#}", id).with(set);
-    return set;
-
-  }
+  // public Set insertSet(Set set) {
+  //
+  // Jongo jongo = new Jongo(mongoDatabase);
+  // MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+  //
+  // sets.insert(set);
+  // logger.error("saved set has id " + set.get_id());
+  //
+  // return set;
+  // }
+  //
+  // public Set updateSet(String id, Set set) {
+  //
+  // Jongo jongo = new Jongo(mongoDatabase);
+  // MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+  //
+  // sets.update("{id:#}", id).with(set);
+  // return set;
+  //
+  // }
 
   public Set saveSet(Set set) {
 
@@ -395,43 +380,78 @@ public class DataManager {
 
   }
 
-  public boolean setExists(String id) {
+
+  public Set getMaxBodyweight12Months() {
 
     Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+    MongoCollection collection = jongo.getCollection(Set.class.getSimpleName());
 
-    MongoCursor<Set> foundSets = sets.find("{id:#}", id).as(Set.class);
+    DateTime toTime = new DateTime();
+    DateTime fromTime = toTime.minusMonths(12);
 
-    if (foundSets.count() == 0) {
-      logger.debug("id " + id + " not found");
-      return false;
+    MongoCursor<Set> found = collection.find("{date: {$gte: #, $lte: # }}", fromTime, toTime).sort("{date: -1}").as(Set.class);
+
+    List<Set> foundList = new LinkedList<>();
+
+    if (foundList.isEmpty()) {
+      return null;
     } else {
-      logger.debug("found " + foundSets.count() + " sets with id " + id);
-      return true;
+      Set maxBodyweight = null;
+
+      while (found.hasNext()) {
+        Set set = found.next();
+        if (maxBodyweight == null) {
+          maxBodyweight = set;
+        } else {
+          if (set.getBodyWeight() > maxBodyweight.getBodyWeight()) {
+            maxBodyweight = set;
+          }
+        }
+      }
+      return maxBodyweight;
     }
 
   }
 
-  public Mood insertMood(Mood mood) {
 
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
 
-    moods.insert(mood);
-    logger.error(mood.getName() + " has id " + mood.get_id());
+  // public boolean setExists(String id) {
+  //
+  // Jongo jongo = new Jongo(mongoDatabase);
+  // MongoCollection sets = jongo.getCollection(Set.class.getSimpleName());
+  //
+  // MongoCursor<Set> foundSets = sets.find("{id:#}", id).as(Set.class);
+  //
+  // if (foundSets.count() == 0) {
+  // logger.debug("id " + id + " not found");
+  // return false;
+  // } else {
+  // logger.debug("found " + foundSets.count() + " sets with id " + id);
+  // return true;
+  // }
+  //
+  // }
 
-    return mood;
-  }
-
-  public Mood updateMood(String name, Mood mood) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
-
-    moods.update("{name:#}", name).with(mood);
-    return mood;
-
-  }
+  // public Mood insertMood(Mood mood) {
+  //
+  // Jongo jongo = new Jongo(mongoDatabase);
+  // MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+  //
+  // moods.insert(mood);
+  // logger.error(mood.getName() + " has id " + mood.get_id());
+  //
+  // return mood;
+  // }
+  //
+  // public Mood updateMood(String name, Mood mood) {
+  //
+  // Jongo jongo = new Jongo(mongoDatabase);
+  // MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+  //
+  // moods.update("{name:#}", name).with(mood);
+  // return mood;
+  //
+  // }
 
   public Mood saveMood(Mood mood) {
 
