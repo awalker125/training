@@ -25,6 +25,7 @@ import uk.co.aw125.training.auth.AuthenticationManager;
 import uk.co.aw125.training.data.DataManager;
 import uk.co.aw125.training.exceptions.CustomBadRequestException;
 import uk.co.aw125.training.exceptions.CustomNotAuthorizedException;
+import uk.co.aw125.training.models.core.Auth;
 import uk.co.aw125.training.models.core.Set;
 
 
@@ -38,16 +39,35 @@ public class StatResource {
 
   @GET
   @Path("/bodyweight/max/12months")
-  @ApiOperation(value = "Get set by set id", response = Set.class)
-  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid name supplied"), @ApiResponse(code = 404, message = "Set not found")})
+  @ApiOperation(value = "Get max bodyweight in the last 12 months", response = Set.class)
+  @ApiResponses(@ApiResponse(code = 404, message = "data not found"))
   public Response getBodyweightMax12mponths(@Context HttpHeaders headers) {
-    
+
     // This will throw a 403 if auth fails
-    AuthenticationManager.getAuthenticationCache().authenticate(headers);
-    
-    Set set = DataManager.getDataManager().getMaxBodyweight12Months();
+    Auth auth = AuthenticationManager.getAuthenticationCache().authenticate(headers);
+
+    Set set = DataManager.getDataManager().getMaxBodyweight12Months(auth.getUsername());
     if (null != set) {
-      
+
+      return Response.ok().entity(set).build();
+    } else {
+      throw new NotFoundException("data not found");
+    }
+  }
+  
+  
+  @GET
+  @Path("/bodyweight/min/12months")
+  @ApiOperation(value = "Get min body weight in the last 12 months", response = Set.class)
+  @ApiResponses(@ApiResponse(code = 404, message = "data not found"))
+  public Response getBodyweightMin12mponths(@Context HttpHeaders headers) {
+
+    // This will throw a 403 if auth fails
+    Auth auth = AuthenticationManager.getAuthenticationCache().authenticate(headers);
+
+    Set set = DataManager.getDataManager().getMinBodyweight12Months(auth.getUsername());
+    if (null != set) {
+
       return Response.ok().entity(set).build();
     } else {
       throw new NotFoundException("data not found");
