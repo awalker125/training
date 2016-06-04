@@ -25,17 +25,26 @@ public class Session {
   private int restingHeartRate;
   @NotNull
   private String mood;
+  
+  @NotNull
+  private String excercise;
 
   private boolean injured = false;
 
   private boolean creatine = false;
 
   private boolean competition = false;
-  
-  private Double volume;
-  
+
+  private Double trainingLoad;
+
+  private Double predictedMax;
+
+  private Double trainingMax;
+
+  private int volume;
+
   private int intensity;
-  
+
   private int sets;
 
   // @XmlTransient
@@ -124,16 +133,6 @@ public class Session {
   }
 
 
-  public Double getVolume() {
-    return volume;
-  }
-
-
-  public void setVolume(Double volume) {
-    this.volume = volume;
-  }
-
-
   public int getIntensity() {
     return intensity;
   }
@@ -163,20 +162,82 @@ public class Session {
     this.date = date;
   }
 
-  
-  public void addSet()
-  {
+
+  public void addSet() {
     this.sets++;
   }
-  
-  public void addVolume(Double weight, int reps)
-  {
-    if (this.volume == null)
-    {
-      this.volume = Double.valueOf(0);
-    }
-    this.volume = this.volume + (weight * reps);
+
+
+  public Double getTrainingLoad() {
+    return trainingLoad;
   }
+
+
+  public void setTrainingLoad(Double trainingLoad) {
+    this.trainingLoad = trainingLoad;
+  }
+
+
+  public Double getPredictedMax() {
+    return predictedMax;
+  }
+
+
+  public void setPredictedMax(Double predictedMax) {
+    this.predictedMax = predictedMax;
+  }
+
+
+  public Double getTrainingMax() {
+    return trainingMax;
+  }
+
+
+  public void setTrainingMax(Double trainingMax) {
+    this.trainingMax = trainingMax;
+  }
+
+
+  public int getVolume() {
+    return volume;
+  }
+
+
+  public void setVolume(int volume) {
+    this.volume = volume;
+  }
+
+
+  public void addVolume(int reps) {
+    this.volume += reps;
+  }
+
   
+  public String getExcercise() {
+    return excercise;
+  }
+
+
+  public void setExcercise(String excercise) {
+    this.excercise = excercise;
+  }
+
+
+  public void addTrainingLoad(Double weight, int reps) {
+    if (this.trainingLoad == null) {
+      this.trainingLoad = Double.valueOf(0);
+    }
+    this.trainingLoad = this.trainingLoad + (weight * reps);
+  }
+
+  public void updatePredictedMax(Double predictedMax) {
+    if (this.predictedMax == null) {
+      this.predictedMax = predictedMax;
+
+    } else if (predictedMax > this.predictedMax) {
+      this.predictedMax = predictedMax;
+    }
+  }
+
 
 }

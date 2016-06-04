@@ -40,20 +40,22 @@ public class SetResource {
 
 
   @POST
-  @ApiOperation(value = "Create set", notes = "This can only be done by the logged in set.")
-  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid set supplied"), @ApiResponse(code = 400, message = "Set already exists")})
+  @ApiOperation(value = "Create set", notes = "This can only be done by the logged in user.")
+  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid set supplied")})
   public Response createSet(@ApiParam(value = "Created set object", required = true) @Valid Set set, @Context HttpHeaders headers) {
 
     // This will throw a 403 if auth fails
     Auth auth = AuthenticationManager.getAuthenticationCache().authenticate(headers);
 
+    
     set.setUsername(auth.getUsername());
     if(set.getDate() == null)
     {
       logger.trace("No date passed. Adding today");
       set.setDate(new Date());
     }
-    //set.addDateIfNeeded();
+    
+    set.updatePredictedMax();
 
     DataManager dataManager = DataManager.getDataManager();
 
@@ -65,7 +67,7 @@ public class SetResource {
   @DELETE
   @Path("/{id}")
   @ApiOperation(value = "Delete set", notes = "This can only be done by the logged in set.")
-  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid id supplied"), @ApiResponse(code = 404, message = "Set not found")})
+  @ApiResponses(value = {@ApiResponse(code = 404, message = "Set not found")})
   public Response deleteSet(@ApiParam(value = "The id that needs to be deleted", required = true) @PathParam("id") String id,
       @Context HttpHeaders headers) {
 
@@ -83,14 +85,12 @@ public class SetResource {
   @GET
   @Path("/{id}")
   @ApiOperation(value = "Get set by set id", response = Set.class)
-  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid name supplied"), @ApiResponse(code = 404, message = "Set not found")})
+  @ApiResponses(value = {@ApiResponse(code = 404, message = "Set not found")})
   public Response getSetByName(
-      @ApiParam(value = "The id that needs to be fetched. Use set1 for testing. ", required = true) @PathParam("id") String id,
+      @ApiParam(value = "The id that needs to be fetched", required = true) @PathParam("id") String id,
       @Context HttpHeaders headers) {
 
     Auth auth = AuthenticationManager.getAuthenticationCache().authenticate(headers);
-
-
 
     Set set = DataManager.getDataManager().getSetById(id, auth.getUsername());
     if (null != set) {

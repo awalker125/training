@@ -32,6 +32,12 @@ public class Set {
 
   @NotNull
   private int actualReps;
+  
+  @ApiModelProperty(hidden = true, notes = "calculated")
+  private Double predictedMax;
+  
+  @NotNull
+  private Double trainingMax;
 
 
   private boolean injured = false;
@@ -48,19 +54,13 @@ public class Set {
   private Date date;
 
 
-
-
   public String get_id() {
     return _id;
   }
 
-
-
   public void set_id(String _id) {
     this._id = _id;
   }
-
-
 
   public String getUsername() {
     return username;
@@ -195,6 +195,27 @@ public class Set {
     this.weight = weight;
   }
 
+  public Double getPredictedMax() {
+    return predictedMax;
+  }
 
+  public void setPredictedMax(Double predictedMax) {
+    this.predictedMax = predictedMax;
+  }
+
+  public Double getTrainingMax() {
+    return trainingMax;
+  }
+
+  public void setTrainingMax(Double trainingMax) {
+    this.trainingMax = trainingMax;
+  }
+
+
+  public void updatePredictedMax()
+  {
+    this.predictedMax = this.weight * (1 + this.actualReps * 0.033);
+  }
+  
 
 }

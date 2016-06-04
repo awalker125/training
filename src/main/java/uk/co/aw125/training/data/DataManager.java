@@ -580,22 +580,6 @@ public class DataManager {
 
     while (targetTime.isBefore(toTime.getMillis())) {
 
-      String query = "{date: #}";
-      logger.info("query: " + query);
-      logger.info("targetTime: " + targetTime);
-      MongoCursor<Session> foundSessions = collection.find(query, targetTime).as(Session.class);
-
-      List<Session> foundList = new LinkedList<>();
-      while (foundSessions.hasNext()) {
-        Session session = (Session) foundSessions.next();
-        foundList.add(session);
-      }
-      Session targetSession = new Session();
-      if (foundList.size() == 1) {
-        targetSession = foundList.get(0);
-      } else if (foundList.size() > 1) {
-        throw new RuntimeException("Multiple sessions found for targetTime: " + targetTime);
-      }
       DateTime targetTimeMorning = targetTime.withTimeAtStartOfDay();
       DateTime targetTimeMorningPlusOneDay = targetTimeMorning.plusDays(1);
       Set[] sets = getSets(targetTimeMorning, targetTimeMorningPlusOneDay, username);
@@ -604,10 +588,33 @@ public class DataManager {
       if (setsList.isEmpty()) {
         logger.warn("No sets found for: " + targetTime);
       } else {
-        boolean first = true;
+
+        Session targetSession = new Session();
+
+       // boolean first = true;
         for (Iterator<Set> iterator = setsList.iterator(); iterator.hasNext();) {
           Set set = (Set) iterator.next();
-          if (first) {
+         // if (first) {
+
+            String query = "{date: #, excercise: #}";
+            logger.info("query: " + query);
+            logger.info("date: " + targetTime);
+            logger.info("excercise: " + set.getExcercise());
+            MongoCursor<Session> foundSessions = collection.find(query, targetTime, set.getExcercise()).as(Session.class);
+
+            List<Session> foundList = new LinkedList<>();
+            while (foundSessions.hasNext()) {
+              Session session = (Session) foundSessions.next();
+              foundList.add(session);
+            }
+
+            if (foundList.size() == 1) {
+              targetSession = foundList.get(0);
+            } else if (foundList.size() > 1) {
+              throw new RuntimeException("Multiple sessions found for targetTime: " + targetTime + " and excercise");
+            }
+
+            targetSession.setExcercise(set.getExcercise());
             targetSession.setDate(targetTimeMorning.toDate());
             targetSession.setUsername(username);
             targetSession.setBodyWeight(set.getBodyWeight());
@@ -616,40 +623,44 @@ public class DataManager {
             targetSession.setCreatine(set.isCreatine());
             targetSession.setInjured(set.isInjured());
             targetSession.addSet();
-            targetSession.addVolume(set.getWeight(), set.getActualReps());
-            first = false;
-          } else {
+            targetSession.addTrainingLoad(set.getWeight(), set.getActualReps());
+            targetSession.addVolume(set.getActualReps());
+            targetSession.setTrainingMax(set.getTrainingMax());
+            targetSession.updatePredictedMax(set.getPredictedMax());
 
-            if (targetSession.getBodyWeight() != set.getBodyWeight()) {
-              logger.warn("bodyweight missmatch");
-            }
-
-            if (targetSession.getMood() != set.getMood()) {
-              logger.warn("mood missmatch");
-            }
-
-            if (targetSession.isCompetition() != set.isCompetition()) {
-              logger.warn("competition missmatch");
-            }
-
-            if (targetSession.isCreatine() != set.isCreatine()) {
-              logger.warn("creatine missmatch");
-            }
-
-
-            if (targetSession.isCreatine() != set.isCreatine()) {
-              logger.warn("creatine missmatch");
-            }
-
-
-            if (targetSession.isInjured() != set.isInjured()) {
-              logger.warn("injured missmatch");
-            }
-
-            targetSession.addSet();
-            targetSession.addVolume(set.getWeight(), set.getActualReps());
-
-          }
+        //    first = false;
+//          } else {
+//
+//            if (targetSession.getBodyWeight() != set.getBodyWeight()) {
+//              logger.warn("bodyweight missmatch");
+//            }
+//
+//            if (targetSession.getMood() != set.getMood()) {
+//              logger.warn("mood missmatch");
+//            }
+//
+//            if (targetSession.isCompetition() != set.isCompetition()) {
+//              logger.warn("competition missmatch");
+//            }
+//
+//            if (targetSession.isCreatine() != set.isCreatine()) {
+//              logger.warn("creatine missmatch");
+//            }
+//
+//
+//            if (targetSession.isCreatine() != set.isCreatine()) {
+//              logger.warn("creatine missmatch");
+//            }
+//
+//
+//            if (targetSession.isInjured() != set.isInjured()) {
+//              logger.warn("injured missmatch");
+//            }
+//
+//            targetSession.addSet();
+//            targetSession.addTrainingLoad(set.getWeight(), set.getActualReps());
+//
+//          }
 
         }
 
@@ -657,6 +668,8 @@ public class DataManager {
         collection.save(targetSession);
         updatedSessions.add(targetSession);
       }
+
+
       targetTime = targetTime.plusDays(1);
     }
 

@@ -44,17 +44,19 @@ public class SessionResource {
 
 
   @PUT
-  @ApiOperation(value = "Create session", notes = "This can only be done by the logged in session.")
-  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid session supplied"), @ApiResponse(code = 400, message = "Session already exists")})
-  public Response updateSessions(@Context HttpHeaders headers, @ApiParam(
-      value = "If not set will default to current time minus 1 hour. Default format is yyyy-MM-dd HH:mm e.g Use 2014-07-02 00:00 for testing.") @QueryParam("fromTime") String fromTimeString,
-  @ApiParam(
-      value = "If not set will default to current time. Default format is yyyy-MM-dd HH:mm e.g 1982-12-05 15:59. Use 2014-07-03 00:00 for testing.") @QueryParam("toTime") String toTimeString)  {
+  @ApiOperation(value = "Update session", notes = "This can only be done by the logged in user. Session will be created if it does not exist.")
+  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid session supplied"),
+      @ApiResponse(code = 404, message = "No set data found to create session in time period.")})
+  public Response updateSessions(@Context HttpHeaders headers,
+      @ApiParam(
+          value = "If not set will default to current time minus 1 day. Default format is yyyy-MM-dd HH:mm e.g Use 2014-07-02 00:00 for testing.") @QueryParam("fromTime") String fromTimeString,
+      @ApiParam(
+          value = "If not set will default to current time. Default format is yyyy-MM-dd HH:mm e.g 1982-12-05 15:59. Use 2014-07-03 00:00 for testing.") @QueryParam("toTime") String toTimeString) {
 
     // This will throw a 403 if auth fails
     Auth auth = AuthenticationManager.getAuthenticationCache().authenticate(headers);
 
-    
+
     logger.debug("fromTimeString " + fromTimeString);
     logger.debug("toTimeString " + toTimeString);
 
@@ -62,7 +64,7 @@ public class SessionResource {
     String dateFormat = "yyyy-MM-dd HH:mm";
 
     DateTime toTime = new DateTime();
-    DateTime fromTime = toTime.minusHours(1);
+    DateTime fromTime = toTime.minusDays(1);
 
     DateTimeFormatter fmt = DateTimeFormat.forPattern(dateFormat);
 
@@ -93,63 +95,71 @@ public class SessionResource {
 
     logger.debug("toTime " + toTime);
     logger.debug("fromTime " + fromTime);
-    
-    
-    if(toTime.isBefore(fromTime.getMillis()))
-    {
+
+
+    if (toTime.isBefore(fromTime.getMillis())) {
       throw new CustomBadRequestException("toTimeString cannot be before fromTimeString");
     }
-    //session.setUsername(auth.getUsername());
-    //if(session.getDate() == null)
-    //{
-    //  logger.trace("No date passed. Adding today");
-    //  session.setDate(new Date());
-   // }
-    //session.addDateIfNeeded();
+    // session.setUsername(auth.getUsername());
+    // if(session.getDate() == null)
+    // {
+    // logger.trace("No date passed. Adding today");
+    // session.setDate(new Date());
+    // }
+    // session.addDateIfNeeded();
 
     DataManager dataManager = DataManager.getDataManager();
 
-    Session[] sessions = dataManager.updateSessions(fromTime,toTime, auth.getUsername());
-    return Response.ok().entity(sessions).build();
+    Session[] sessions = dataManager.updateSessions(fromTime, toTime, auth.getUsername());
+    if (sessions == null || sessions.length == 0) {
+      throw new NotFoundException("No set data found to create session in time period.");
+    } else {
+      return Response.ok().entity(sessions).build();
+    }
 
   }
 
-//  @DELETE
-//  @Path("/{id}")
-//  @ApiOperation(value = "Delete session", notes = "This can only be done by the logged in session.")
-//  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid id supplied"), @ApiResponse(code = 404, message = "Session not found")})
-//  public Response deleteSession(@ApiParam(value = "The id that needs to be deleted", required = true) @PathParam("id") String id,
-//      @Context HttpHeaders headers) {
-//
-//    // This will throw a 403 if auth fails
-//    Auth auth = AuthenticationManager.getAuthenticationCache().authenticate(headers);
-//
-//
-//    if (DataManager.getDataManager().removeSessionById(id, auth.getUsername())) {
-//      return Response.ok().entity("").build();
-//    } else {
-//      throw new NotFoundException("Session not found");
-//    }
-//  }
+  // @DELETE
+  // @Path("/{id}")
+  // @ApiOperation(value = "Delete session", notes = "This can only be done by the logged in
+  // session.")
+  // @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid id supplied"),
+  // @ApiResponse(code = 404, message = "Session not found")})
+  // public Response deleteSession(@ApiParam(value = "The id that needs to be deleted", required =
+  // true) @PathParam("id") String id,
+  // @Context HttpHeaders headers) {
+  //
+  // // This will throw a 403 if auth fails
+  // Auth auth = AuthenticationManager.getAuthenticationCache().authenticate(headers);
+  //
+  //
+  // if (DataManager.getDataManager().removeSessionById(id, auth.getUsername())) {
+  // return Response.ok().entity("").build();
+  // } else {
+  // throw new NotFoundException("Session not found");
+  // }
+  // }
 
-//  @GET
-//  @Path("/{id}")
-//  @ApiOperation(value = "Get session by session id", response = Session.class)
-//  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid name supplied"), @ApiResponse(code = 404, message = "Session not found")})
-//  public Response getSessionByName(
-//      @ApiParam(value = "The id that needs to be fetched. Use session1 for testing. ", required = true) @PathParam("id") String id,
-//      @Context HttpHeaders headers) {
-//
-//    Auth auth = AuthenticationManager.getAuthenticationCache().authenticate(headers);
-//
-//
-//
-//    Session session = DataManager.getDataManager().getSessionById(id, auth.getUsername());
-//    if (null != session) {
-//      return Response.ok().entity(session).build();
-//    } else {
-//      throw new NotFoundException("Session not found");
-//    }
-//  }
+  // @GET
+  // @Path("/{id}")
+  // @ApiOperation(value = "Get session by session id", response = Session.class)
+  // @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid name supplied"),
+  // @ApiResponse(code = 404, message = "Session not found")})
+  // public Response getSessionByName(
+  // @ApiParam(value = "The id that needs to be fetched. Use session1 for testing. ", required =
+  // true) @PathParam("id") String id,
+  // @Context HttpHeaders headers) {
+  //
+  // Auth auth = AuthenticationManager.getAuthenticationCache().authenticate(headers);
+  //
+  //
+  //
+  // Session session = DataManager.getDataManager().getSessionById(id, auth.getUsername());
+  // if (null != session) {
+  // return Response.ok().entity(session).build();
+  // } else {
+  // throw new NotFoundException("Session not found");
+  // }
+  // }
 
 }
