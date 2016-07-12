@@ -15,7 +15,6 @@ import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 import org.jongo.MongoCursor;
 
-import com.google.common.collect.Sets;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -30,12 +29,12 @@ import uk.co.aw125.training.models.core.Session;
 import uk.co.aw125.training.models.core.User;
 import uk.co.aw125.training.models.support.Heartbeat;
 
-public class DataManager {
+public class DataManagerOrig {
 
-  private static final Logger logger = LogManager.getLogger(DataManager.class);
+  private static final Logger logger = LogManager.getLogger(DataManagerOrig.class);
 
   // Singleton
-  private static DataManager dataManager;
+  private static DataManagerOrig dataManager;
 
   // fields
 
@@ -50,7 +49,7 @@ public class DataManager {
   String configPrefix;
 
   @SuppressWarnings("deprecation")
-  private DataManager() {
+  private DataManagerOrig() {
     // Get some bootstrap info from the web.xml
     configName = Launcher.getConfigName();
     configPrefix = Launcher.getConfigPrefix();
@@ -61,8 +60,8 @@ public class DataManager {
     // load properties for mongodb
     configManager = ConfigManager.getConfigManager(configName);
 
-    mongoConnectionString = configManager.getRequiredProperty(configPrefix + "." + DataManager.class.getSimpleName() + ".mongoConnectionString");
-    mongoDbName = configManager.getRequiredProperty(configPrefix + "." + DataManager.class.getSimpleName() + ".mongoDbName");
+    mongoConnectionString = configManager.getRequiredProperty(configPrefix + "." + DataManagerOrig.class.getSimpleName() + ".mongoConnectionString");
+    mongoDbName = configManager.getRequiredProperty(configPrefix + "." + DataManagerOrig.class.getSimpleName() + ".mongoDbName");
 
     logger.trace("mongoConnectionString: " + mongoConnectionString);
     logger.trace("mongoDbName: " + mongoDbName);
@@ -82,9 +81,9 @@ public class DataManager {
   }
 
   // singleton
-  public static synchronized DataManager getDataManager() {
+  public static synchronized DataManagerOrig getDataManager() {
     if (dataManager == null) {
-      dataManager = new DataManager();
+      dataManager = new DataManagerOrig();
     }
     return dataManager;
   }
@@ -108,18 +107,16 @@ public class DataManager {
 
   }
 
-  // Users
+  public User insertUser(User user) {
 
-  // public User insertUser(User user) {
-  //
-  // Jongo jongo = new Jongo(mongoDatabase);
-  // MongoCollection users = jongo.getCollection(User.class.getSimpleName());
-  //
-  // users.insert(user);
-  // logger.error(user.getUsername() + " has id " + user.getId());
-  //
-  // return user;
-  // }
+    Jongo jongo = new Jongo(mongoDatabase);
+    MongoCollection users = jongo.getCollection(User.class.getSimpleName());
+
+    users.insert(user);
+    logger.error(user.getUsername() + " has id " + user.getId());
+
+    return user;
+  }
 
   public User updateUser(String username, User user) {
 
@@ -207,18 +204,16 @@ public class DataManager {
 
   }
 
-  // Excercises
+  public Excercise insertExcercise(Excercise excercise) {
 
-  // public Excercise insertExcercise(Excercise excercise) {
-  //
-  // Jongo jongo = new Jongo(mongoDatabase);
-  // MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
-  //
-  // excercises.insert(excercise);
-  // logger.error(excercise.getName() + " has id " + excercise.get_id());
-  //
-  // return excercise;
-  // }
+    Jongo jongo = new Jongo(mongoDatabase);
+    MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+
+    excercises.insert(excercise);
+    logger.error(excercise.getName() + " has id " + excercise.get_id());
+
+    return excercise;
+  }
 
   public Excercise updateExcercise(String name, Excercise excercise) {
 
@@ -309,168 +304,32 @@ public class DataManager {
 
   }
 
-  public Excercise[] getExcercises() {
 
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
-
-    MongoCursor<Excercise> foundExcercises = excercises.find().as(Excercise.class);
-
-    List<Excercise> foundExcercisesList = new LinkedList<>();
-
-    while (foundExcercises.hasNext()) {
-      Excercise excercise = foundExcercises.next();
-      foundExcercisesList.add(excercise);
-    }
-    return foundExcercisesList.toArray(new Excercise[0]);
-  }
-
-  public Excercise[] searchExcerciseByName(String search) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
-
-    // MongoCursor<Excercise> foundExcercises = excercises.find("{name:#}", Pattern.compile(search +
-    // ".*")).limit(10).as(Excercise.class);
-
-    // Basically here if it contains the string we will return it. (Case insensitive)
-    MongoCursor<Excercise> foundExcercises =
-        excercises.find("{name:#}", Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
-
-    List<Excercise> foundExcercisesList = new LinkedList<>();
-
-    while (foundExcercises.hasNext()) {
-      Excercise excercise = foundExcercises.next();
-      foundExcercisesList.add(excercise);
-    }
-    return foundExcercisesList.toArray(new Excercise[0]);
-  }
-
-  public Excercise[] searchExcerciseByTagName(String search) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
-
-    // MongoCursor<Excercise> foundExcercises = excercises.find("tags: [{name: #}]",
-    // Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
-    MongoCursor<Excercise> foundExcercises =
-        excercises.find("{tags: {$elemMatch: {name: #}}}", Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
-
-    List<Excercise> foundExcercisesList = new LinkedList<>();
-
-    while (foundExcercises.hasNext()) {
-      Excercise excercise = foundExcercises.next();
-      foundExcercisesList.add(excercise);
-    }
-    return foundExcercisesList.toArray(new Excercise[0]);
-  }
-
-  public Excercise[] searchExcerciseByTagValue(String search) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
-
-    MongoCursor<Excercise> foundExcercises =
-        excercises.find("{tags: {$elemMatch: {value: #}}}", Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
-
-    List<Excercise> foundExcercisesList = new LinkedList<>();
-
-    while (foundExcercises.hasNext()) {
-      Excercise excercise = foundExcercises.next();
-      foundExcercisesList.add(excercise);
-    }
-    return foundExcercisesList.toArray(new Excercise[0]);
-  }
-
-  // Mood
-
-  public Mood saveMood(Mood mood) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
-
-    moods.save(mood);
-    return mood;
-
-  }
-
-  public void removeMood(Mood mood) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
-
-    moods.remove(mood.get_id());
-
-  }
-
-  public Mood getMoodByName(String name) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
-
-    MongoCursor<Mood> foundMoods = moods.find("{name:#}", name).as(Mood.class);
-
-    if (foundMoods.count() == 0) {
-      logger.debug("name " + name + " not found");
-      return null;
-    } else if (foundMoods.count() == 1) {
-      Mood mood = foundMoods.next();
-      return mood;
-    } else {
-      throw new RuntimeException("found " + foundMoods.count() + " moods with the name" + name);
-    }
-
-  }
-
-  public boolean removeMoodByName(String name) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
-
-    MongoCursor<Mood> foundMoods = moods.find("{name:#}", name).as(Mood.class);
-
-    if (foundMoods.count() == 0) {
-      logger.debug("name " + name + " not found");
-      return false; // Mood not found
-    } else {
-      int deleted = 0;
-      while (foundMoods.hasNext()) {
-        Mood mood = foundMoods.next();
-        logger.debug("deleting mood with id" + mood.get_id());
-        moods.remove(mood.get_id());
-        deleted++;
-      }
-      logger.debug("deleted " + deleted + " mood(s) with name " + name);
-      return true; // We got rid
-    }
-
-  }
-
-  public boolean moodExists(String name) {
-
-    Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
-
-    MongoCursor<Mood> foundMoods = moods.find("{name:#}", name).as(Mood.class);
-
-    if (foundMoods.count() == 0) {
-      logger.debug("name " + name + " not found");
-      return false;
-    } else {
-      logger.debug("found " + foundMoods.count() + " moods with name " + name);
-      return true;
-    }
-
-  }
-
-
-
-  // Set
 
   private String getSetCollectionName(String username) {
     if (Utils.unlessNullOrEmpty(username)) {
       StringBuilder builder = new StringBuilder();
       builder.append(Set.class.getSimpleName());
+      builder.append("_");
+      builder.append(username);
+
+      String noWhiteSpace = Utils.removeWhiteSpace(builder.toString());
+      String noSpecials = Utils.removeSpecialCharacters(noWhiteSpace, "_");
+      return noSpecials;
+
+
+    } else {
+      throw new RuntimeException("username is null of empty");
+    }
+
+
+
+  }
+
+  private String getSessionCollectionName(String username) {
+    if (Utils.unlessNullOrEmpty(username)) {
+      StringBuilder builder = new StringBuilder();
+      builder.append(Session.class.getSimpleName());
       builder.append("_");
       builder.append(username);
 
@@ -543,6 +402,7 @@ public class DataManager {
     }
 
   }
+
 
   public Set getMinBodyweight12Months(String username) {
 
@@ -670,27 +530,6 @@ public class DataManager {
     }
   }
 
-  // Session
-  private String getSessionCollectionName(String username) {
-    if (Utils.unlessNullOrEmpty(username)) {
-      StringBuilder builder = new StringBuilder();
-      builder.append(Session.class.getSimpleName());
-      builder.append("_");
-      builder.append(username);
-
-      String noWhiteSpace = Utils.removeWhiteSpace(builder.toString());
-      String noSpecials = Utils.removeSpecialCharacters(noWhiteSpace, "_");
-      return noSpecials;
-
-
-    } else {
-      throw new RuntimeException("username is null of empty");
-    }
-
-
-
-  }
-
   public Session[] updateSessions(DateTime fromTime, DateTime toTime, String username) {
 
     String collectionName = getSessionCollectionName(username);
@@ -722,76 +561,76 @@ public class DataManager {
 
         Session targetSession = new Session();
 
-        // boolean first = true;
+       // boolean first = true;
         for (Iterator<Set> iterator = setsList.iterator(); iterator.hasNext();) {
           Set set = (Set) iterator.next();
-          // if (first) {
+         // if (first) {
 
-          String query = "{date: #, excercise: #}";
-          logger.info("query: " + query);
-          logger.info("date: " + targetTime);
-          logger.info("excercise: " + set.getExcercise());
-          MongoCursor<Session> foundSessions = collection.find(query, targetTime, set.getExcercise()).as(Session.class);
+            String query = "{date: #, excercise: #}";
+            logger.info("query: " + query);
+            logger.info("date: " + targetTime);
+            logger.info("excercise: " + set.getExcercise());
+            MongoCursor<Session> foundSessions = collection.find(query, targetTime, set.getExcercise()).as(Session.class);
 
-          List<Session> foundList = new LinkedList<>();
-          while (foundSessions.hasNext()) {
-            Session session = (Session) foundSessions.next();
-            foundList.add(session);
-          }
+            List<Session> foundList = new LinkedList<>();
+            while (foundSessions.hasNext()) {
+              Session session = (Session) foundSessions.next();
+              foundList.add(session);
+            }
 
-          if (foundList.size() == 1) {
-            targetSession = foundList.get(0);
-          } else if (foundList.size() > 1) {
-            throw new RuntimeException("Multiple sessions found for targetTime: " + targetTime + " and excercise");
-          }
+            if (foundList.size() == 1) {
+              targetSession = foundList.get(0);
+            } else if (foundList.size() > 1) {
+              throw new RuntimeException("Multiple sessions found for targetTime: " + targetTime + " and excercise");
+            }
 
-          targetSession.setExcercise(set.getExcercise());
-          targetSession.setDate(targetTimeMorning.toDate());
-          targetSession.setUsername(username);
-          targetSession.setBodyWeight(set.getBodyWeight());
-          targetSession.setMood(set.getMood());
-          targetSession.setCompetition(set.isCompetition());
-          targetSession.setCreatine(set.isCreatine());
-          targetSession.setInjured(set.isInjured());
-          targetSession.addSet();
-          targetSession.addTrainingLoad(set.getWeight(), set.getActualReps());
-          targetSession.addVolume(set.getActualReps());
-          targetSession.setTrainingMax(set.getTrainingMax());
-          targetSession.updatePredictedMax(set.getPredictedMax());
+            targetSession.setExcercise(set.getExcercise());
+            targetSession.setDate(targetTimeMorning.toDate());
+            targetSession.setUsername(username);
+            targetSession.setBodyWeight(set.getBodyWeight());
+            targetSession.setMood(set.getMood());
+            targetSession.setCompetition(set.isCompetition());
+            targetSession.setCreatine(set.isCreatine());
+            targetSession.setInjured(set.isInjured());
+            targetSession.addSet();
+            targetSession.addTrainingLoad(set.getWeight(), set.getActualReps());
+            targetSession.addVolume(set.getActualReps());
+            targetSession.setTrainingMax(set.getTrainingMax());
+            targetSession.updatePredictedMax(set.getPredictedMax());
 
-          // first = false;
-          // } else {
-          //
-          // if (targetSession.getBodyWeight() != set.getBodyWeight()) {
-          // logger.warn("bodyweight missmatch");
-          // }
-          //
-          // if (targetSession.getMood() != set.getMood()) {
-          // logger.warn("mood missmatch");
-          // }
-          //
-          // if (targetSession.isCompetition() != set.isCompetition()) {
-          // logger.warn("competition missmatch");
-          // }
-          //
-          // if (targetSession.isCreatine() != set.isCreatine()) {
-          // logger.warn("creatine missmatch");
-          // }
-          //
-          //
-          // if (targetSession.isCreatine() != set.isCreatine()) {
-          // logger.warn("creatine missmatch");
-          // }
-          //
-          //
-          // if (targetSession.isInjured() != set.isInjured()) {
-          // logger.warn("injured missmatch");
-          // }
-          //
-          // targetSession.addSet();
-          // targetSession.addTrainingLoad(set.getWeight(), set.getActualReps());
-          //
-          // }
+        //    first = false;
+//          } else {
+//
+//            if (targetSession.getBodyWeight() != set.getBodyWeight()) {
+//              logger.warn("bodyweight missmatch");
+//            }
+//
+//            if (targetSession.getMood() != set.getMood()) {
+//              logger.warn("mood missmatch");
+//            }
+//
+//            if (targetSession.isCompetition() != set.isCompetition()) {
+//              logger.warn("competition missmatch");
+//            }
+//
+//            if (targetSession.isCreatine() != set.isCreatine()) {
+//              logger.warn("creatine missmatch");
+//            }
+//
+//
+//            if (targetSession.isCreatine() != set.isCreatine()) {
+//              logger.warn("creatine missmatch");
+//            }
+//
+//
+//            if (targetSession.isInjured() != set.isInjured()) {
+//              logger.warn("injured missmatch");
+//            }
+//
+//            targetSession.addSet();
+//            targetSession.addTrainingLoad(set.getWeight(), set.getActualReps());
+//
+//          }
 
         }
 
@@ -807,67 +646,156 @@ public class DataManager {
     return updatedSessions.toArray(new Session[0]);
   }
 
-  public boolean sessionExists(DateTime dateTime, String username) {
-    Session found = getSessionByDate(dateTime, username);
-    if (found == null) {
+  public Mood saveMood(Mood mood) {
+
+    Jongo jongo = new Jongo(mongoDatabase);
+    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+    moods.save(mood);
+    return mood;
+
+  }
+
+  public void removeMood(Mood mood) {
+
+    Jongo jongo = new Jongo(mongoDatabase);
+    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+    moods.remove(mood.get_id());
+
+  }
+
+  public Mood getMoodByName(String name) {
+
+    Jongo jongo = new Jongo(mongoDatabase);
+    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+    MongoCursor<Mood> foundMoods = moods.find("{name:#}", name).as(Mood.class);
+
+    if (foundMoods.count() == 0) {
+      logger.debug("name " + name + " not found");
+      return null;
+    } else if (foundMoods.count() == 1) {
+      Mood mood = foundMoods.next();
+      return mood;
+    } else {
+      throw new RuntimeException("found " + foundMoods.count() + " moods with the name" + name);
+    }
+
+  }
+
+  public boolean removeMoodByName(String name) {
+
+    Jongo jongo = new Jongo(mongoDatabase);
+    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+    MongoCursor<Mood> foundMoods = moods.find("{name:#}", name).as(Mood.class);
+
+    if (foundMoods.count() == 0) {
+      logger.debug("name " + name + " not found");
+      return false; // Mood not found
+    } else {
+      int deleted = 0;
+      while (foundMoods.hasNext()) {
+        Mood mood = foundMoods.next();
+        logger.debug("deleting mood with id" + mood.get_id());
+        moods.remove(mood.get_id());
+        deleted++;
+      }
+      logger.debug("deleted " + deleted + " mood(s) with name " + name);
+      return true; // We got rid
+    }
+
+  }
+
+  public boolean moodExists(String name) {
+
+    Jongo jongo = new Jongo(mongoDatabase);
+    MongoCollection moods = jongo.getCollection(Mood.class.getSimpleName());
+
+    MongoCursor<Mood> foundMoods = moods.find("{name:#}", name).as(Mood.class);
+
+    if (foundMoods.count() == 0) {
+      logger.debug("name " + name + " not found");
       return false;
     } else {
+      logger.debug("found " + foundMoods.count() + " moods with name " + name);
       return true;
     }
+
   }
 
-
-  public Session getSessionByDate(DateTime dateTime, String username) {
-    DateTime targetDateTime = Utils.normaliseDate(dateTime);
-
-    String query = "{date: #}";
-
-    String collectionName = getSessionCollectionName(username);
+  public Excercise[] getExcercises() {
 
     Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection collection = jongo.getCollection(collectionName);
+    MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
 
+    MongoCursor<Excercise> foundExcercises = excercises.find().as(Excercise.class);
 
-    MongoCursor<Session> results = collection.find(query, targetDateTime.toDate()).as(Session.class);
+    List<Excercise> foundExcercisesList = new LinkedList<>();
 
-
-    if (results.count() == 0) {
-      logger.debug("no results found with query: " + query + " in collection " + collectionName);
-      return null;
-    } else if (results.count() == 1) {
-      return results.next();
-    } else {
-      throw new RuntimeException("found " + results.count() + " records but there should only be one");
+    while (foundExcercises.hasNext()) {
+      Excercise excercise = foundExcercises.next();
+      foundExcercisesList.add(excercise);
     }
-
+    return foundExcercisesList.toArray(new Excercise[0]);
   }
 
-  public Session saveSession(Session session, String username) {
-    String collectionName = getSessionCollectionName(username);
+  public Excercise[] searchExcerciseByName(String search) {
+
     Jongo jongo = new Jongo(mongoDatabase);
-    MongoCollection collection = jongo.getCollection(collectionName);
-    collection.save(session);
-    return session;
+    MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+
+    // MongoCursor<Excercise> foundExcercises = excercises.find("{name:#}", Pattern.compile(search +
+    // ".*")).limit(10).as(Excercise.class);
+
+    // Basically here if it contains the string we will return it. (Case insensitive)
+    MongoCursor<Excercise> foundExcercises =
+        excercises.find("{name:#}", Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
+
+    List<Excercise> foundExcercisesList = new LinkedList<>();
+
+    while (foundExcercises.hasNext()) {
+      Excercise excercise = foundExcercises.next();
+      foundExcercisesList.add(excercise);
+    }
+    return foundExcercisesList.toArray(new Excercise[0]);
   }
 
+  public Excercise[] searchExcerciseByTagName(String search) {
 
-  // sets
-  private String getSetsCollectionName(String username) {
-    if (Utils.unlessNullOrEmpty(username)) {
-      StringBuilder builder = new StringBuilder();
-      builder.append(Sets.class.getSimpleName());
-      builder.append("_");
-      builder.append(username);
+    Jongo jongo = new Jongo(mongoDatabase);
+    MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
 
-      String noWhiteSpace = Utils.removeWhiteSpace(builder.toString());
-      String noSpecials = Utils.removeSpecialCharacters(noWhiteSpace, "_");
-      return noSpecials;
+    // MongoCursor<Excercise> foundExcercises = excercises.find("tags: [{name: #}]",
+    // Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
+    MongoCursor<Excercise> foundExcercises =
+        excercises.find("{tags: {$elemMatch: {name: #}}}", Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
 
+    List<Excercise> foundExcercisesList = new LinkedList<>();
 
-    } else {
-      throw new RuntimeException("username is null of empty");
+    while (foundExcercises.hasNext()) {
+      Excercise excercise = foundExcercises.next();
+      foundExcercisesList.add(excercise);
     }
+    return foundExcercisesList.toArray(new Excercise[0]);
+  }
 
+  public Excercise[] searchExcerciseByTagValue(String search) {
+
+    Jongo jongo = new Jongo(mongoDatabase);
+    MongoCollection excercises = jongo.getCollection(Excercise.class.getSimpleName());
+
+    MongoCursor<Excercise> foundExcercises =
+        excercises.find("{tags: {$elemMatch: {value: #}}}", Pattern.compile(search, Pattern.CASE_INSENSITIVE)).limit(10).as(Excercise.class);
+
+    List<Excercise> foundExcercisesList = new LinkedList<>();
+
+    while (foundExcercises.hasNext()) {
+      Excercise excercise = foundExcercises.next();
+      foundExcercisesList.add(excercise);
+    }
+    return foundExcercisesList.toArray(new Excercise[0]);
   }
 
 }

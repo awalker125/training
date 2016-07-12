@@ -22,6 +22,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.mongodb.util.Util;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,8 +33,10 @@ import uk.co.aw125.training.auth.AuthenticationManager;
 import uk.co.aw125.training.data.DataManager;
 import uk.co.aw125.training.exceptions.CustomBadRequestException;
 import uk.co.aw125.training.exceptions.CustomNotAuthorizedException;
+import uk.co.aw125.training.helpers.Utils;
 import uk.co.aw125.training.models.core.Auth;
 import uk.co.aw125.training.models.core.Session;
+import uk.co.aw125.training.models.core.Set;
 
 
 @Path("/session")
@@ -118,6 +122,43 @@ public class SessionResource {
     }
 
   }
+
+  @POST
+  @ApiOperation(value = "Create session", notes = "This can only be done by the logged in user.")
+  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid session supplied")})
+  public Response createSession(@ApiParam(value = "Created session object", required = true) @Valid Session session, @Context HttpHeaders headers) {
+
+    // This will throw a 403 if auth fails
+    Auth auth = AuthenticationManager.getAuthenticationCache().authenticate(headers);
+
+
+    session.setUsername(auth.getUsername());
+    if (session.getDate() == null) {
+      logger.trace("No date passed. Adding today");
+      Date now = new Date();
+      DateTime normalised = Utils.normaliseDate(now);
+      session.setDate(normalised.toDate());
+    } else {
+      DateTime normalised = Utils.normaliseDate(session.getDate());
+      session.setDate(normalised.toDate());
+    }
+
+    // session.updatePredictedMax();
+
+    DataManager dataManager = DataManager.getDataManager();
+
+    DateTime query = new DateTime(session.getDate().getTime());
+
+    if (dataManager.sessionExists(query, auth.getUsername())) {
+
+      throw new CustomBadRequestException("Session already exists");
+    }
+
+    Session inserted = dataManager.saveSession(session, auth.getUsername());
+    return Response.ok().entity(inserted).build();
+
+  }
+
 
   // @DELETE
   // @Path("/{id}")
