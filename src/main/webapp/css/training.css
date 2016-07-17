@@ -4,10 +4,13 @@ body {
 	background: none;
 }
 
+
 .full {
-  background: url(../images/DSC_0199_01-compressor.jpg) no-repeat center center fixed; 
+  background: url(../images/training1.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
 }
+
+
