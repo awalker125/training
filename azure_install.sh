@@ -8,6 +8,8 @@ echo "install deps"
 
 	sudo yum -y install git maven tomcat  httpd mod_ssl mod_proxy_html
 
+	
+
 	sudo  systemctl enable httpd
 	sudo  systemctl enable tomcat
 	sudo  systemctl enable firewalld
@@ -56,5 +58,17 @@ echo "getting latest version of app"
 
 	rm -rf ${WORKING_DIR}
 
-	sudo  systemctl start httpd
-	sudo  systemctl start tomcat
+	sudo  systemctl restart httpd
+	sudo  systemctl restart tomcat
+	
+	
+
+
+#curl --silent https://raw.githubusercontent.com/srvrco/getssl/master/getssl >/tmp/getssl ; chmod 700 /tmp/getssl
+#sudo cp /tmp/getssl /usr/local/bin/getssl
+#sudo chown root:root /usr/local/bin/getssl
+#sudo chmod 755 /usr/local/bin/getssl
+#sudo ln -s /usr/local/bin/getssl /usr/bin/getssl
+
+
+#getssl -c training.aw125.co.uk
