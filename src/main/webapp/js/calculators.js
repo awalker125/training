@@ -1,23 +1,34 @@
-$(document).ready(
-		function() {
+$(document).ready(function() {
 
-			// jQuery methods go here...
+	// jQuery methods go here...
 
-			// Event handlers
+	// Event handlers
 
-//			var randomBackground = getRandomInt(1, 9);
-//
-//			$(".full").css(
-//					"background",
-//					'url(../training/images/training' + randomBackground
-//							+ '.jpg) no-repeat center center fixed')
+	// var randomBackground = getRandomInt(1, 9);
+	//
+	// $(".full").css(
+	// "background",
+	// 'url(../training/images/training' + randomBackground
+	// + '.jpg) no-repeat center center fixed')
 
-			$("#maxLiftTextBox").on("change paste keyup", function() {
-				// alert($(this).val());
-				update_percentages($(this).val())
-			});
+	$("#maxLiftTextBox").on("change paste keyup", function() {
+		// alert($(this).val());
+		update_percentages($(this).val())
+	});
 
-		});
+	$("#maxLiftResetButton").click(function() {
+		reset_max()
+	});
+
+	maxLiftResetButton
+
+});
+
+function reset_max() {
+
+	$("#maxLiftTextBox").html("")
+
+}
 
 function update_percentages(max) {
 
