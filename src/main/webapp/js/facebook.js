@@ -37,14 +37,28 @@ function customLoginHandler() {
 
 function getUserDetails() {
 
+	var credentials = {};
+
 	FB.api('/me?fields=email', function(response) {
 		console.info("userDetails")
 		console.info(JSON.stringify(response));
+
+		credentials.username = response.email;
+		credentials.accesscode = response.id;
 	});
 
-	var credentials = {};
-	credentials.username = "testUser";
-	credentials.accesscode = "testcode";
+	$(document).ajaxSend(function(e, xhr, options) {
+		xhr.setRequestHeader("username", credentials.username);
+		xhr.setRequestHeader("api_key", credentials.accesscode);
+	});
+
+	Cookies.set('username', credentials.username, {
+		secure : true
+	});
+	Cookies.set('api_key', credentials.accesscode, {
+		secure : true
+	});
+
 	return credentials;
 }
 
