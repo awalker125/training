@@ -20,7 +20,7 @@ $(document).ready(function() {
 		reset_max()
 	});
 
-	maxLiftResetButton
+	//maxLiftResetButton
 
 });
 

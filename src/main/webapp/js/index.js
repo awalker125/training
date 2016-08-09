@@ -2,20 +2,36 @@ $(document).ready(function() {
 
 	// jQuery methods go here...
 
-	update_userdetails()
+	//update_userdetails()
 
+	$("#updateUsernameBtn").click(function() {
+		update_userdetails()
+	});
+
+	
 });
 
 function update_userdetails() {
+	
+	var credentials = getUserDetails();
 
-	var username = Cookies.get('username', {
-		secure : true
-	});
-	var api_key = Cookies.get('api_key', {
-		secure : true
-	});
+	console.info("update_userdetails called")
+	
+	alert("called")
 
-	$('#usernameTxt').html(username)
-	$('#apiKeyTxt').html(api_key)
+	//if (typeof (Storage) !== "undefined") {
+		// Code for localStorage/sessionStorage.
+
+	//	var credentials = localStorage.getItem("credentials");
+
+	//	console.info("credentials")
+	//	console.info(JSON.stringify(credentials));
+
+		$('#usernameTxt').html(credentials.username)
+		$('#apiKeyTxt').html(credentials.accesscode)
+
+	//} else {
+	//	alert("Sorry your broswer is too old. Try something newer")
+	//}
 
 }

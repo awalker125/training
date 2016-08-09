@@ -37,6 +37,9 @@
 	<!-- Navigation -->
 	<nav class="navbar navbar-inverse navbar-fixed-bottom"
 		role="navigation">
+
+
+
 		<div class="container">
 			<!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header">
@@ -55,6 +58,10 @@
 					<li><a href="about.html">About</a></li>
 					<li><a href="calculators.html">Calculators</a></li>
 					<li><a href="log.html">Log</a></li>
+					<li><a class="fb-login-button" data-max-rows="1"
+						data-size="large" data-show-faces="false"
+						data-auto-logout-link="true" onlogin="facebookLoginHandler();"
+						data-scope="basic_info,public_profile,email"></a></li>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->
@@ -62,6 +69,28 @@
 		<!-- /.container -->
 	</nav>
 
+	<!-- <div class="container">
+		<div class="alert alert-success fade in" id="successDialog" hidden="true">>
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Success!</strong> This alert box could indicate a successful
+			or positive action.
+		</div>
+		<div class="alert alert-info fade in" id="infoDialog" hidden="true">>
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Info!</strong> This alert box could indicate a neutral
+			informative change or action.
+		</div>
+		<div class="alert alert-warning fade in" id="warningDialog" hidden="true">>
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Warning!</strong> This alert box could indicate a warning
+			that might need attention.
+		</div>
+		<div class="alert alert-danger fade in" id="dangerDialog" hidden="true">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Danger!</strong> This alert box could indicate a dangerous or
+			potentially negative action.
+		</div>
+	</div> -->
 	<!-- Page Content -->
 	<div class="container">
 		<div class="row">
@@ -72,27 +101,26 @@
 		<!-- /.row -->
 
 
-		<div class="row">
-			<div class="col-md-6 col-sm-12">
-				<p class="lead">Facebook login</p>
-
-				<div class="fb-login-button" data-max-rows="1" data-size="large"
-					data-show-faces="false" data-auto-logout-link="true"
-					onlogin="customLoginHandler();"
-					data-scope="basic_info,public_profile,email"></div>
-				<div id="status"></div>
-			</div>
-		</div>
 		<!-- /.row -->
 
 
 
 		<div class="row">
 			<div class="col-md-6 col-xs-3">
-				<p class="badge">Username</p>
+				<p class="badge">Name</p>
 			</div>
 			<div class="col-md-6 col-xs-3">
-				<span id="usernameTxt" class="badge"></span>
+				<span id="nameTxt" class="badge"></span>
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-md-6 col-xs-3">
+				<p class="badge">Email</p>
+			</div>
+			<div class="col-md-6 col-xs-3">
+				<span id="emailTxt" class="badge"></span>
 			</div>
 		</div>
 
@@ -101,9 +129,10 @@
 				<p class="badge">Api Key</p>
 			</div>
 			<div class="col-md-6 col-xs-3">
-				<span id="apiKeyTxt" class="badge"></span>
+				<span id="accessTokenTxt" class="badge"></span>
 			</div>
 		</div>
+
 
 
 
@@ -143,12 +172,8 @@
 
 
 	<script src="js/facebook.js"></script>
-	
-	<script src="js/index.js"></script>
 
-	<!-- 	<script src="js/execercise-app.js"></script> -->
-
-
+	<!-- <script src="js/index.js"></script>-->
 
 
 </body>

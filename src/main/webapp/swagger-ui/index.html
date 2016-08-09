@@ -107,7 +107,17 @@
 		}
 
 		function addUsername() {
-			var username = "clarkkent";
+			
+			var username = sessionStorage.getItem("email")
+			if(username)
+			{
+				console.info("username is: " + username)
+					}
+			else
+				{
+				username = "clarkkent";
+				}
+			
 			window.swaggerUi.api.clientAuthorizations.add("key",
 					new SwaggerClient.ApiKeyAuthorization("username", username,
 							"header"));
@@ -117,6 +127,18 @@
 		$('#input_apiKey').change(addApiKeyAuthorization);
 
 		var apiKey = "ueh32ueb23be32e73e723e2e7h2e7h23eibhvhv";
+
+		var apiKey = sessionStorage.getItem("accessToken")
+		if(apiKey)
+		{
+			console.info("apiKey is: " + apiKey)
+				}
+		else
+			{
+			apiKey = "ueh32ueb23be32e73e723e2e7h2e7h23eibhvhv";
+			}
+
+		
 		$('#input_apiKey').val(apiKey);
 
 		window.swaggerUi.load();
