@@ -89,51 +89,45 @@
 		<div class="row">&nbsp;</div>
 
 
-		<div class="row">
-
-
-
-			<form class="form-inline">
-
-				<div class="col-md-6 col-xs-3">
-
-					<!-- 	<div class="form-group"> -->
-					<input type="number" class="form-control" id="weightTextBox"
-						placeholder="100">
-					<!-- 	</div> -->
-
-
-				</div>
-
-
-				<div class="col-md-6 col-xs-3">
-
-					<!-- 	<div class="form-group"> -->
-					<input type="number" class="form-control" id="repsTextBox"
-						placeholder="2">
-					<!-- 	</div> -->
-
-
-				</div>
-
-				<div class="col-md-6 col-xs-3">
-					<button type="reset" class="btn btn-default">Reset</button>
-
-				</div>
-
-			</form>
 
 
 
 
-		</div>
+
+
+
+
+
+
 
 
 		<div class="row">&nbsp;</div>
 
 
 
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label class="control-label col-sm-2" for="weightTxt">Weight:</label>
+				<div class="col-sm-10">
+					<input type="number" class="form-control" id="weightTxt"
+						placeholder="100">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-2" for="repsTxt">Reps:</label>
+				<div class="col-sm-10">
+					<input type="number" class="form-control" id="repsTxt"
+						placeholder="2">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button id="createSetBtn" type="button" class="btn btn-default">Create</button>
+				</div>
+			</div>
+		</form>
 
+		<div id="results"></div>
 
 
 	</div>
