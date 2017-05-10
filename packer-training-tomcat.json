@@ -1,0 +1,56 @@
+{
+	"variables": {
+		"build_number": "0.1",
+		"repo_name": "aw125",
+		"image_name": "training-tomcat",
+		"base_image_name": "centos7",
+		"base_image_version": "latest",
+		"built_by": "DevOps",
+		"base_image_pull": "true"
+	},
+	"builders": [
+		{
+			"type": "docker",
+			"image": "{{user `repo_name`}}/{{user `base_image_name`}}:{{user `base_image_version`}}",
+			"commit": true,
+			"pull": "{{user `base_image_pull`}}",
+			"changes": [
+				"LABEL maintainer \"{{user `built_by`}}\"",  "ENTRYPOINT [\"docker-entrypoint.sh\", \"start\"]"
+			],
+			"volumes": {
+				"/image_build/{{user `repo_name`}}-{{user `image_name`}}/build": "/build"
+			}
+		}
+	],
+	"provisioners": [
+		{
+			"type": "ansible",
+			"playbook_file": "ansible/training-tomcat.yml"
+		}, {
+			"type": "shell",
+			"inline": [
+				"yum clean all"
+			]
+		}, {
+			"type": "file",
+			"source": "docker-entrypoint.sh",
+			"destination": "/usr/bin/docker-entrypoint.sh"
+		}, {
+			"type": "shell",
+			"inline": [
+				"chmod +x /usr/bin/docker-entrypoint.sh"
+			]
+		}
+	],
+	"post-processors": [
+		{
+			"type": "docker-tag",
+			"repository": "{{user `repo_name`}}/{{user `base_image_name`}}-{{user `image_name`}}",
+			"tag": "{{user `build_number`}}"
+		}, {
+			"type": "docker-tag",
+			"repository": "{{user `repo_name`}}/{{user `base_image_name`}}-{{user `image_name`}}",
+			"tag": "latest"
+		}
+	]
+}

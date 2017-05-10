@@ -1,0 +1,7 @@
+---
+# This playbook deploys the training application
+
+- hosts: default
+  roles:
+    - httpd
+    - tomcat
